@@ -37,7 +37,10 @@ public class ChessGame {
         WHITE,
         BLACK
     }
-
+    
+    public enum BoardType {
+        DEFAULT
+    }
     /**
      * Gets a valid moves for a piece at the given location
      *
