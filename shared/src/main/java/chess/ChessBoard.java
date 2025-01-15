@@ -10,12 +10,19 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    ChessPosition[] board = new ChessPosition[64];
-    ChessPiece[] pieces = new ChessPiece[64];
+    public ChessPosition[] board = new ChessPosition[64];
+    public ChessPiece[] pieces = new ChessPiece[64];
     public ChessBoard() {
-        for (int i = 0; i < 64; i++) {
-            board[i] = new ChessPosition(i/8,i%8);
+        //why is the default board build literally terrible
+        //starts at 8,1; ascends to 8,8 and then goes down to 7,1; repeats :stupid:
+        for (int i = 56; i > 0;) {
+            board[i] = new ChessPosition((i/8)+1,(i%8)+1);
             pieces[i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.NONE);
+            if((i!=56) && (i%8==0)) {
+                i -= 8;
+            } else {
+                i--;
+            }
         }
     }
 
@@ -41,7 +48,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
-        int idx = (position.getRow()*8) + position.getColumn();
+        int idx = ((position.getRow()-1)*8) + position.getColumn()-1;
         System.out.println(idx);
         pieces[idx] = piece;
         //throw new RuntimeException("Not implemented");
@@ -55,7 +62,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        int idx = (position.getRow()*8) + position.getColumn();
+        int idx = ((position.getRow()-1)*8) + position.getColumn()-1;
         return pieces[idx];
         //throw new RuntimeException("Not implemented");
     }
@@ -75,7 +82,7 @@ public class ChessBoard {
                 PPPPPPPP
                 RNBQKBNR
                 """;
-        for (int i = 0; i < 64; i++) {
+        for (int i = 56; i > 0;) {
             switch (layout.charAt(i)) {
                 case 'r':
                     pieces[i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
@@ -117,8 +124,14 @@ public class ChessBoard {
                     pieces[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
                     break;
             }
-            System.out.print(pieces[i].getPieceType());
+            if((i!=56) && (i%8==0)) {
+                i -= 8;
+            } else {
+                i--;
+            }
+            //System.out.print(board[i]);
         }
+
         //throw new RuntimeException("Not implemented");
     }
 }
