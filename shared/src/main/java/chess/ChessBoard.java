@@ -16,6 +16,7 @@ public class ChessBoard {
     //ChessPosition position;
     //ChessPiece piece;
     ArrayList<ArrayList<ChessTile>> tiles;
+    private final ChessTile edge = new ChessTile.EdgeTile();
     public ChessBoard() {
         this(8,8);
     }
@@ -60,7 +61,15 @@ public class ChessBoard {
         }
         for (int i=0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                northEdge = i==(rows-1);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northTile, (j > 0) ? tiles.get(i).get(j-1) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.eastTile, (i < rows - 1) ? tiles.get(i+1).get(j) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southTile, (j < cols - 1) ? tiles.get(i).get(j+1) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.westTile, (i > 0) ? tiles.get(i-1).get(j) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northeastTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.northTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.eastTile) != edge)) ? tiles.get(i+1).get(j-1) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southeastTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.southTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.eastTile) != edge)) ? tiles.get(i+1).get(j+1) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southwestTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.southTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.westTile) != edge)) ? tiles.get(i-1).get(j+1) : edge);
+                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northwestTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.northTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.westTile) != edge)) ? tiles.get(i-1).get(j-1) : edge);
+                /*northEdge = i==(rows-1);
                 southEdge = i==0;
                 eastEdge = j==(cols-1);
                 westEdge = j==0;
@@ -107,7 +116,7 @@ public class ChessBoard {
                     if(!southEdge) {
                         tempTile.setSoutheastTile(tiles.get(i-1).get(j+1));
                     }
-                }
+                }*/
             }
         }
     }
@@ -218,8 +227,8 @@ public class ChessBoard {
                 .toString()
                 .replaceAll("\\s+","")
                 .toCharArray();
-            for (int i=0; i<64; i++){
-                switch(ch[i]){
+            for (int i=55; i>0;){
+                switch(ch[i]) {
                     case '\n':
                         break;
                     case 'P':
@@ -259,7 +268,7 @@ public class ChessBoard {
                         tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                         break;
                     default:
-                        tempPiece = null;
+                        tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
                         break;
                 }
                 //System.out.print(ch[i]);
@@ -267,6 +276,11 @@ public class ChessBoard {
                 //  System.out.println("");
                 //}
                 addPiece(new ChessPosition((i/8)+1, (i%8)+1), tempPiece);
+                if((i!=55) && (i%8!=7)) {
+                    i--;
+                } else {
+                    i -= 8;
+                }
             }
             break;
         }
