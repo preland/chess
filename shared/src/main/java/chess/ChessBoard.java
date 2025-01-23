@@ -192,10 +192,6 @@ public class ChessBoard {
                         tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
                         break;
                 }
-                //System.out.print(ch[i]);
-                //if (i/8==0){
-                //  System.out.println("");
-                //}
                 addPiece(new ChessPosition((i/8)+1, (i%8)+1), tempPiece);
                 if((i!=55) && (i%8!=7)) {
                     i--;
