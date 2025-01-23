@@ -1,9 +1,7 @@
 package chess;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
-
-import chess.ChessPiece.PieceType;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -13,22 +11,20 @@ import chess.ChessPiece.PieceType;
  */
 public class ChessBoard {
 
-    //ChessPosition position;
-    //ChessPiece piece;
-    ArrayList<ArrayList<ChessTile>> tiles;
-    private final ChessTile edge = new ChessTile.EdgeTile();
+    ChessPiece[] pieces;
     public ChessBoard() {
-        this(8,8);
-    }
-    public ChessBoard(int rows, int cols) {
-        tiles = new ArrayList<ArrayList<ChessTile> >();
-        LayoutTiles(rows, cols);
+        this.pieces = new ChessPiece[64];
+        for (int i = 0; i < 64; i++) {
+            pieces[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
+        }
+
+
     }
 
     @Override
     public String toString() {
         return "ChessBoard{" +
-                "tiles=" + tiles +
+                "pieces=" + Arrays.toString(pieces) +
                 '}';
     }
 
@@ -38,87 +34,19 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        return Objects.equals(tiles, that.tiles);
+        return Objects.deepEquals(pieces, that.pieces);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(tiles);
+        return Arrays.hashCode(pieces);
     }
 
-    /**
-     * Lays out the tiles on the chessboard
-     */
-    void LayoutTiles(int rows, int cols) {
-        boolean northEdge, southEdge, eastEdge, westEdge; 
-        ChessTile tempTile;
-        //euclidian chessboard
-        for (int i = 0; i < rows; i++) {
-            tiles.add(new ArrayList<ChessTile>());
-            for (int j = 0; j < cols; j++) {
-                tiles.get(i).add(new ChessTile());
-            }
-        }
-        for (int i=0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northTile, (j > 0) ? tiles.get(i).get(j-1) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.eastTile, (i < rows - 1) ? tiles.get(i+1).get(j) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southTile, (j < cols - 1) ? tiles.get(i).get(j+1) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.westTile, (i > 0) ? tiles.get(i-1).get(j) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northeastTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.northTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.eastTile) != edge)) ? tiles.get(i+1).get(j-1) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southeastTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.southTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.eastTile) != edge)) ? tiles.get(i+1).get(j+1) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.southwestTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.southTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.westTile) != edge)) ? tiles.get(i-1).get(j+1) : edge);
-                tiles.get(i).get(j).setConnectedTiles(ChessTile.tileDirection.northwestTile, (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.northTile) != edge && (tiles.get(i).get(j).getConnectedTile(ChessTile.tileDirection.westTile) != edge)) ? tiles.get(i-1).get(j-1) : edge);
-                /*northEdge = i==(rows-1);
-                southEdge = i==0;
-                eastEdge = j==(cols-1);
-                westEdge = j==0;
-                tempTile = tiles.get(i).get(j);
-                //literal edge cases
-
-                if(southEdge){
-                    tempTile.setSouthwestTile(null);
-                    tempTile.setSouthTile(null);
-                    tempTile.setSoutheastTile(null);
-                } else {
-                    tempTile.setSouthTile(tiles.get(i-1).get(j));
-                }
-                if(westEdge){
-                    westEdge = true;
-                    tempTile.setNorthwestTile(null);
-                    tempTile.setWestTile(null);
-                    tempTile.setSouthwestTile(null);
-                } else {
-                    tempTile.setWestTile(tiles.get(i).get(j-1));
-                    if(!southEdge) {
-                        tempTile.setSouthwestTile(tiles.get(i-1).get(j-1));
-                    }
-                }
-                if(northEdge) {
-                    tempTile.setNorthwestTile(null);
-                    tempTile.setNorthTile(null);
-                    tempTile.setNortheastTile(null);
-                } else {
-                    tempTile.setNorthTile(tiles.get(i+1).get(j));
-                    if(!westEdge) {
-                       tempTile.setNorthwestTile(tiles.get(i+1).get(j-1));
-                    }
-                }
-                if(eastEdge) {
-                    tempTile.setNortheastTile(null);
-                    tempTile.setEastTile(null);
-                    tempTile.setSoutheastTile(null);
-                } else {
-                    tempTile.setEastTile(tiles.get(i).get(j+1));
-                    if(!northEdge) {
-                        tempTile.setNortheastTile(tiles.get(i+1).get(j+1));
-                    }
-                    if(!southEdge) {
-                        tempTile.setSoutheastTile(tiles.get(i-1).get(j+1));
-                    }
-                }*/
-            }
-        }
+    public int positionToIndex(ChessPosition position) {
+        return ((position.row-1)*8) + (position.col-1);
+    }
+    public ChessPosition indexToPosition(int i) {
+        return new ChessPosition((i/8)+1,(i%8)+1);
     }
     /**
      * Adds a chess piece to the chessboard
@@ -128,7 +56,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         //throw new RuntimeException("Not implemented");
-        tiles.get(position.getRow() - 1 ).get(position.getColumn() -1 ).setPiece(piece);
+        pieces[positionToIndex(position)] = piece;
     }
 
     /**
@@ -140,16 +68,14 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         //throw new RuntimeException("Not implemented");
-        return tiles.get(position.getRow()).get(position.getColumn()).getPiece();
+        return pieces[positionToIndex(position)];
 
     }
+
     public void printBoard() {
-      printBoard(8,8);
-    }
-    public void printBoard(int rows, int cols) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                  ChessPiece piece = tiles.get(i).get(j).piece;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                  ChessPiece piece = pieces[i*8 + j];
                 if(piece==null) {
                   System.out.print("+");
                   continue;
@@ -204,11 +130,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        resetBoard(ChessGame.BoardType.DEFAULT);
-    }
-    public void resetBoard(ChessGame.BoardType boardType) {
-        switch (boardType) {
-          default:
             String layout = 
             """
             rnbkqbnr
@@ -220,7 +141,7 @@ public class ChessBoard {
             PPPPPPPP
             RNBKQBNR
             """;
-            ChessPiece tempPiece = null;
+            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
             StringBuilder res = new StringBuilder();
             char[] ch = res.append(layout)
                 .reverse()
@@ -282,7 +203,5 @@ public class ChessBoard {
                     i -= 8;
                 }
             }
-            break;
-        }
     }
 }
