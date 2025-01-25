@@ -130,29 +130,37 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-            String layout = 
-            """
-            rnbkqbnr
-            pppppppp
-            ++++++++
-            ++++++++
-            ++++++++
-            ++++++++
-            PPPPPPPP
-            RNBKQBNR
-            """;
+            String layout =
+                    "rnbqkbnr\n" +
+                    "pppppppp\n" +
+                    "++++++++\n" +
+                    "++++++++\n" +
+                    "++++++++\n" +
+                    "++++++++\n" +
+                    "PPPPPPPP\n" +
+                    "RNBQKBNR\n";
             ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
-            StringBuilder res = new StringBuilder();
+            /*(StringBuilder res = new StringBuilder();
             char[] ch = res.append(layout)
                 .reverse()
                 .toString()
                 .replaceAll("\\s+","")
-                .toCharArray();
-            for (int i=55; i>0;){
-                switch(ch[i]) {
+                .toCharArray();*/
+            int row =8;
+            int col =1;
+            boolean stupdifix = false;
+            for(char c: layout.toCharArray()) {
+                if(!stupdifix){
+                    stupdifix = true;
+                    continue;
+                }
+                switch (c) {
                     case '\n':
+                        col = 1;
+                        row--;
                         break;
                     case 'P':
+                        //System.out.println("P");
                         tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
                         break;
                     case 'K':
@@ -192,12 +200,23 @@ public class ChessBoard {
                         tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
                         break;
                 }
-                addPiece(new ChessPosition((i/8)+1, (i%8)+1), tempPiece);
-                if((i!=55) && (i%8!=7)) {
-                    i--;
-                } else {
-                    i -= 8;
+                if(row==0) {
+                    break;
                 }
+                //System.out.println(row);
+                if(c != '\n') {
+                addPiece(new ChessPosition(row, col), tempPiece);
+                    col++;
+                }
+
             }
+        addPiece(new ChessPosition(8,1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(8,2), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(8,3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(8,4), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(8,5), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
+        addPiece(new ChessPosition(8,6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(8,7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(8,8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
     }
 }

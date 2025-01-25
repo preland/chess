@@ -33,7 +33,7 @@ public class ChessBoardTests {
     public void defaultGameBoard() {
         var expectedBoard = TestUtilities.defaultBoard();
 
-        var actualBoard = TestUtilities.defaultBoard();//new ChessBoard();
+        var actualBoard = new ChessBoard();
         actualBoard.resetBoard();
         actualBoard.printBoard();
         expectedBoard.printBoard();
