@@ -15,7 +15,7 @@ public class ChessBoard {
     public ChessBoard() {
         this.pieces = new ChessPiece[64];
         for (int i = 0; i < 64; i++) {
-            pieces[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
+            pieces[i] = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
         }
 
 
@@ -141,7 +141,7 @@ public class ChessBoard {
             PPPPPPPP
             RNBKQBNR
             """;
-            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
+            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
             StringBuilder res = new StringBuilder();
             char[] ch = res.append(layout)
                 .reverse()
@@ -189,7 +189,7 @@ public class ChessBoard {
                         tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                         break;
                     default:
-                        tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.NONE);
+                        tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
                         break;
                 }
                 addPiece(new ChessPosition((i/8)+1, (i%8)+1), tempPiece);
