@@ -154,6 +154,49 @@ public class ChessPiece {
         System.out.println("Checking distance " + m + " with direction " + d + " results in: " + ret);
         return ret;
     }
+    public boolean underAttack(ChessBoard board, ChessPosition position, ChessGame.TeamColor color) {
+        switch(color) {
+            case BLACK:
+                for (int i = 0; i < 64; i++) {
+                    ChessPosition tempPos = board.indexToPosition(i);
+                    ChessPiece tempPiece = board.getPiece(tempPos);
+                    if (tempPiece.getPieceType() == PieceType.KING) {
+                        break;
+                    }
+                    if (tempPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                        break;
+                    }
+                    for(ChessMove move : tempPiece.pieceMoves(board, tempPos)) {
+                        if(move.getEndPosition() == position) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+            case WHITE:
+
+                for (int i = 0; i < 64; i++) {
+                    ChessPosition tempPos = board.indexToPosition(i);
+                    ChessPiece tempPiece = board.getPiece(tempPos);
+                    if (tempPiece.getPieceType() == PieceType.KING) {
+                        break;
+                    }
+                    if (tempPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        break;
+                    }
+                    for (ChessMove move : tempPiece.pieceMoves(board, tempPos)) {
+                        if (move.getEndPosition() == position) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        return false;
+    }
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -212,19 +255,23 @@ public class ChessPiece {
                         wbt = wv>2;
                     }
                     if(nv%2==1 && !nb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(9*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.NONE));
                     }
 
                     if(sv%2==1 && !sb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), PieceType.NONE));
                     }
 
                     if(ev%2==1 && !eb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), PieceType.NONE));
                     }
 
                     if(wv%2==1 && !wb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), PieceType.NONE));
                     }
                     nb = nbt;
                     sb = sbt;
@@ -278,19 +325,23 @@ public class ChessPiece {
                         wbt = wv>2;
                     }
                     if(nv%2==1 && !nb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), PieceType.NONE));
                     }
 
                     if(sv%2==1 && !sb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), PieceType.NONE));
                     }
 
                     if(ev%2==1 && !eb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) + i), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), PieceType.NONE));
                     }
 
                     if(wv%2==1 && !wb) {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), PieceType.NONE));
+                        if(!underAttack(board, board.indexToPosition(board.positionToIndex(myPosition) - i), board.getPiece(myPosition).getTeamColor()))
+                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), PieceType.NONE));
                     }
                     nb = nbt;
                     sb = sbt;
