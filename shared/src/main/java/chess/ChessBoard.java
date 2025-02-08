@@ -1,7 +1,10 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+
+import static java.lang.Math.abs;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -218,5 +221,42 @@ public class ChessBoard {
         addPiece(new ChessPosition(8,6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(8,7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(8,8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+    }
+
+    public ChessPosition findKing(ChessGame.TeamColor teamColor) {
+        for (int i = 0; i < 64; i++) {
+            if(getPiece(indexToPosition(i)).getPieceType() != ChessPiece.PieceType.KING)
+                continue;
+            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor)
+                return indexToPosition(i);
+        }
+        return null;
+    }
+    public boolean underAttack(ChessPosition kingPos, ChessGame.TeamColor teamColor) {
+        ChessGame.TeamColor opponentColor = null;
+        if(teamColor == ChessGame.TeamColor.WHITE)
+            opponentColor = ChessGame.TeamColor.BLACK;
+        if(teamColor == ChessGame.TeamColor.BLACK)
+            opponentColor = ChessGame.TeamColor.WHITE;
+        Collection<int> skipIter;
+        for (int i = 0; i < 64; i++) {
+
+            if((getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.KING)){
+                if (abs((i/8)+1 - kingPos.getRow()) == 1 || abs((i%8)+1 - kingPos.getColumn()) == 1) {
+                    return true;
+                }
+                else
+                    return false
+            }
+            if(getPiece(indexToPosition(i)).getTeamColor() != opponentColor)
+                continue;
+            if(getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.NONE)
+                continue;
+            for(ChessMove move : getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i))) {
+                if (move.getEndPosition() == kingPos)
+                    return true;
+            }
+        }
+        return false;
     }
 }
