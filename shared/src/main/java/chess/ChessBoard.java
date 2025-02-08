@@ -232,36 +232,53 @@ public class ChessBoard {
         }
         return null;
     }
-    public void handleKingEdgeCase(ChessPiece piece) {
-        if(piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            getPiece(new ChessPosition())
+    public void handleKingEdgeCase(ChessPosition position) {
+        int row = position.getRow();
+        int col = position.getColumn();
+        if(getPiece(position).getTeamColor() == ChessGame.TeamColor.BLACK) {
+            getPiece(new ChessPosition(row+1, col+1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row+1, col-1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row-1, col+1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row-1, col-1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row, col+1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row, col-1)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row+1, col)).setUnderBlackAttack(true);
+            getPiece(new ChessPosition(row-1, col)).setUnderBlackAttack(true);
         }
-        if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-
+        if(getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            getPiece(new ChessPosition(row+1, col+1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row+1, col-1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row-1, col+1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row-1, col-1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row, col+1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row, col-1)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row+1, col)).setUnderWhiteAttack(true);
+            getPiece(new ChessPosition(row-1, col)).setUnderWhiteAttack(true);
         }
     }
     public void generateUnderAttack() {
         for (int i = 0; i < 64; i++) {
             ChessPiece tempPiece = getPiece(indexToPosition(i));
             if(tempPiece.getPieceType() == ChessPiece.PieceType.KING){
-                handleKingEdgeCase(tempPiece);
+                handleKingEdgeCase(indexToPosition(i));
+                continue;
             }
-            for(ChessMove move : tempPiece.pieceMoves(this, indexToPosition(i))) {
+            for(ChessMove move : tempPiece.pieceMoves(this, indexToPosition(i), true)) {
                 if(tempPiece.getTeamColor() == ChessGame.TeamColor.WHITE)
-                    move.getEndPosition().setUnderWhiteAttack(true);
+                    getPiece(move.getEndPosition()).setUnderWhiteAttack(true);
                 if(tempPiece.getTeamColor() == ChessGame.TeamColor.BLACK)
-                    move.getEndPosition().setUnderBlackAttack(true);
+                    getPiece(move.getEndPosition()).setUnderBlackAttack(true);
             }
         }
     }
     public boolean underAttack(ChessPosition kingPos, ChessGame.TeamColor teamColor) {
         generateUnderAttack();
         if(teamColor == ChessGame.TeamColor.WHITE){
-            if(kingPos.isUnderBlackAttack())
+            if(getPiece(kingPos).isUnderBlackAttack())
                 return true;
         }
         if(teamColor == ChessGame.TeamColor.BLACK){
-            return kingPos.isUnderWhiteAttack();
+            return getPiece(kingPos).isUnderWhiteAttack();
         }
 
         //Collection<int> skipIter;

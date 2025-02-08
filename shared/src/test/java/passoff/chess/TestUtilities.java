@@ -18,7 +18,7 @@ public class TestUtilities {
 
     public static void validateMoves(ChessBoard board, ChessPiece testPiece, ChessPosition startPosition,
                                      List<ChessMove> validMoves) {
-        var pieceMoves = new ArrayList<>(testPiece.pieceMoves(board, startPosition));
+        var pieceMoves = new ArrayList<>(testPiece.pieceMoves(board, startPosition, false));
         validateMoves(validMoves, pieceMoves);
     }
 

@@ -13,11 +13,12 @@ public class ChessPosition {
     int row, col;
     boolean underBlackAttack;
     boolean underWhiteAttack;
+
     public ChessPosition(int row, int col) {
-      this.row = row;
-      this.col = col;
-      this.underBlackAttack = false;
-      this.underWhiteAttack = false;
+        this.row = row;
+        this.col = col;
+        this.underBlackAttack = false;
+        this.underWhiteAttack = false;
     }
 
     @Override
@@ -57,20 +58,5 @@ public class ChessPosition {
     public int getColumn() {
         return this.col;
     }
-
-    public boolean isUnderWhiteAttack() {
-        return underWhiteAttack;
-    }
-
-    public void setUnderWhiteAttack(boolean underWhiteAttack) {
-        this.underWhiteAttack = underWhiteAttack;
-    }
-
-    public boolean isUnderBlackAttack() {
-        return underBlackAttack;
-    }
-
-    public void setUnderBlackAttack(boolean underBlackAttack) {
-        this.underBlackAttack = underBlackAttack;
-    }
 }
+

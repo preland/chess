@@ -52,7 +52,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        return board.getPiece(startPosition).pieceMoves(board, startPosition, true);
     }
 
     /**
@@ -62,7 +62,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if(board.getPiece(move.getStartPosition()).pieceMoves(board, move.getStartPosition()).contains(move)) {
+        if(board.getPiece(move.getStartPosition()).pieceMoves(board, move.getStartPosition(), true).contains(move)) {
             throw new InvalidMoveException();
         }
         if(move.promotionPiece != null) {
@@ -95,7 +95,7 @@ public class ChessGame {
         if(!isInCheck(teamColor))
             return false;
         ChessPosition kingPos = board.findKing(teamColor);
-        return board.getPiece(kingPos).pieceMoves(board, kingPos).isEmpty();
+        return board.getPiece(kingPos).pieceMoves(board, kingPos, true).isEmpty();
         //throw new RuntimeException("Not implemented");
     }
 
