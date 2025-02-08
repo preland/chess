@@ -256,22 +256,18 @@ public class ChessPiece {
                         wbt = wv>2;
                     }
                     if(nv%2==1 && !nb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.NONE));
                     }
 
                     if(sv%2==1 && !sb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), PieceType.NONE));
                     }
 
                     if(ev%2==1 && !eb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), PieceType.NONE));
                     }
 
                     if(wv%2==1 && !wb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), PieceType.NONE));
                     }
                     nb = nbt;
@@ -326,22 +322,18 @@ public class ChessPiece {
                         wbt = wv>2;
                     }
                     if(nv%2==1 && !nb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), PieceType.NONE));
                     }
 
                     if(sv%2==1 && !sb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), PieceType.NONE));
                     }
 
                     if(ev%2==1 && !eb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) + i), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), PieceType.NONE));
                     }
 
                     if(wv%2==1 && !wb) {
-                        if(!board.underAttack(board.indexToPosition(board.positionToIndex(myPosition) - i), board.getPiece(myPosition).getTeamColor()))
                             validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), PieceType.NONE));
                     }
                     nb = nbt;

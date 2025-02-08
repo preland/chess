@@ -232,14 +232,40 @@ public class ChessBoard {
         }
         return null;
     }
-    public boolean underAttack(ChessPosition kingPos, ChessGame.TeamColor teamColor) {
-        ChessGame.TeamColor opponentColor = null;
-        if(teamColor == ChessGame.TeamColor.WHITE)
-            opponentColor = ChessGame.TeamColor.BLACK;
-        if(teamColor == ChessGame.TeamColor.BLACK)
-            opponentColor = ChessGame.TeamColor.WHITE;
-        Collection<int> skipIter;
+    public void handleKingEdgeCase(ChessPiece piece) {
+        if(piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            getPiece(new ChessPosition())
+        }
+        if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+
+        }
+    }
+    public void generateUnderAttack() {
         for (int i = 0; i < 64; i++) {
+            ChessPiece tempPiece = getPiece(indexToPosition(i));
+            if(tempPiece.getPieceType() == ChessPiece.PieceType.KING){
+                handleKingEdgeCase(tempPiece);
+            }
+            for(ChessMove move : tempPiece.pieceMoves(this, indexToPosition(i))) {
+                if(tempPiece.getTeamColor() == ChessGame.TeamColor.WHITE)
+                    move.getEndPosition().setUnderWhiteAttack(true);
+                if(tempPiece.getTeamColor() == ChessGame.TeamColor.BLACK)
+                    move.getEndPosition().setUnderBlackAttack(true);
+            }
+        }
+    }
+    public boolean underAttack(ChessPosition kingPos, ChessGame.TeamColor teamColor) {
+        generateUnderAttack();
+        if(teamColor == ChessGame.TeamColor.WHITE){
+            if(kingPos.isUnderBlackAttack())
+                return true;
+        }
+        if(teamColor == ChessGame.TeamColor.BLACK){
+            return kingPos.isUnderWhiteAttack();
+        }
+
+        //Collection<int> skipIter;
+        /*for (int i = 0; i < 64; i++) {
 
             if((getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.KING)){
                 if (abs((i/8)+1 - kingPos.getRow()) == 1 || abs((i%8)+1 - kingPos.getColumn()) == 1) {
@@ -256,7 +282,7 @@ public class ChessBoard {
                 if (move.getEndPosition() == kingPos)
                     return true;
             }
-        }
+        }*/
         return false;
     }
 }
