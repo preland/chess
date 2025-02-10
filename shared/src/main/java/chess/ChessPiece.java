@@ -312,22 +312,22 @@ public class ChessPiece {
 
             if(nv%2==1 && !nb) {
 
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
             }
 
             if(sv%2==1 && !sb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), null));
             }
 
             if(ev%2==1 && !eb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), null));
             }
 
             if(wv%2==1 && !wb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), null));
             }
             nb = nbt;
@@ -382,22 +382,22 @@ public class ChessPiece {
                 wbt = wv>2;
             }
             if(nv%2==1 && !nb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), null));
             }
 
             if(sv%2==1 && !sb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), null));
             }
 
             if(ev%2==1 && !eb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), null));
             }
 
             if(wv%2==1 && !wb) {
-                if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (i)), null)))
+                //if(!testBoard.underAttack(opponent, new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (i)), null)))
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), null));
             }
             nb = nbt;
@@ -788,14 +788,16 @@ public class ChessPiece {
             System.out.println(abs(col1-col2)+abs(row1-row2));
             if(abs(col1-col2)+abs(row1-row2) == 3) {
                 if(selectedPiece.getPieceType() != null) {
-                    if(selectedPiece.pieceColor == board.pieces[i].pieceColor) {
-                        continue;
+                    if(board.pieces[i] != null) {
+                        if (selectedPiece.pieceColor == board.pieces[i].pieceColor) {
+                            continue;
+                        }
                     }
-                    if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(i), null))) {
-                            break;
-                    } else {
+                    //if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(i), null))) {
+                    //        break;
+                    //} else {
                         validMoves.add(new ChessMove(myPosition, board.indexToPosition(i), null));
-                    }
+                    //}
                 }
             }
 

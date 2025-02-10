@@ -15,7 +15,7 @@ public class ChessMove {
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this. endPosition = endPosition;
-        this.promotionPiece = null;
+        this.promotionPiece = promotionPiece;
     }
 
     @Override

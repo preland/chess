@@ -18,7 +18,7 @@ public class ChessBoard implements Cloneable{
     public ChessBoard() {
         this.pieces = new ChessPiece[64];
         for (int i = 0; i < 64; i++) {
-            pieces[i] = new ChessPiece(null, null);
+            pieces[i] = null;
         }
 
 
@@ -147,7 +147,7 @@ public class ChessBoard implements Cloneable{
                     "++++++++\n" +
                     "PPPPPPPP\n" +
                     "RNBQKBNR\n";
-            ChessPiece tempPiece = new ChessPiece(null, null);
+            ChessPiece tempPiece = null;
             /*(StringBuilder res = new StringBuilder();
             char[] ch = res.append(layout)
                 .reverse()
@@ -205,7 +205,7 @@ public class ChessBoard implements Cloneable{
                         tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                         break;
                     default:
-                        tempPiece = new ChessPiece(null, null);
+                        tempPiece = null;
                         break;
                 }
                 if(row==0) {
@@ -264,49 +264,55 @@ public class ChessBoard implements Cloneable{
         //if(getPiece(move.getStartPosition()).pieceMoves(this, move.getStartPosition(), true).contains(move)) {
           //  throw new InvalidMoveException();
         //}
+        if(getPiece(move.getStartPosition()) == null) {
+            return;
+        }
         if(move.promotionPiece != null) {
             addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
-            addPiece(move.getStartPosition(), new ChessPiece(null, null));
+            addPiece(move.getStartPosition(), null);
         } else {
             addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), getPiece(move.getStartPosition()).getPieceType()));
-            addPiece(move.getStartPosition(), new ChessPiece(null, null));
+            addPiece(move.getStartPosition(), null);
         }
     }
     public boolean underAttack(ChessGame.TeamColor teamColor, ChessMove testMove) {
         ChessPosition kingPos = findKing(teamColor);
         //try {
-            testMove(testMove);
+         //   testMove(testMove);
         //} catch (InvalidMoveException e) {
         //    throw new RuntimeException(e);
         //}
         //generateUnderAttack();
-        if(teamColor == ChessGame.TeamColor.WHITE){
+        /*if(teamColor == ChessGame.TeamColor.WHITE){
             if(getPiece(kingPos).isUnderBlackAttack())
                 return true;
         }
         if(teamColor == ChessGame.TeamColor.BLACK){
             return getPiece(kingPos).isUnderWhiteAttack();
-        }
+        }*/
 
         //Collection<int> skipIter;
-        /*for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < 64; i++) {
 
-            if((getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.KING)){
+            /*if((getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.KING)){
                 if (abs((i/8)+1 - kingPos.getRow()) == 1 || abs((i%8)+1 - kingPos.getColumn()) == 1) {
                     return true;
                 }
                 else
                     return false
+            }*/
+            if(getPiece(indexToPosition(i)) == null) {
+                continue;
             }
-            if(getPiece(indexToPosition(i)).getTeamColor() != opponentColor)
+            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor)
                 continue;
             if(getPiece(indexToPosition(i)).getPieceType() == null)
                 continue;
             for(ChessMove move : getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i))) {
-                if (move.getEndPosition() == kingPos)
+                if (move.getEndPosition().equals(kingPos))
                     return true;
             }
-        }*/
+        }
         return false;
     }
 }
