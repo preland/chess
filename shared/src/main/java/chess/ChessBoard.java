@@ -12,18 +12,23 @@ import static java.lang.Math.abs;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable{
 
-    ChessPiece[] pieces;
+    public ChessPiece[] pieces;
     public ChessBoard() {
         this.pieces = new ChessPiece[64];
         for (int i = 0; i < 64; i++) {
-            pieces[i] = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
+            pieces[i] = new ChessPiece(null, null);
         }
 
 
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        ChessBoard clonedBoard = (ChessBoard) super.clone();
+        clonedBoard.pieces = this.pieces.clone();
+        return clonedBoard;
+    }
     @Override
     public String toString() {
         return "ChessBoard{" +
@@ -142,7 +147,7 @@ public class ChessBoard {
                     "++++++++\n" +
                     "PPPPPPPP\n" +
                     "RNBQKBNR\n";
-            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
+            ChessPiece tempPiece = new ChessPiece(null, null);
             /*(StringBuilder res = new StringBuilder();
             char[] ch = res.append(layout)
                 .reverse()
@@ -200,7 +205,7 @@ public class ChessBoard {
                         tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                         break;
                     default:
-                        tempPiece = new ChessPiece(ChessGame.TeamColor.NONE, ChessPiece.PieceType.NONE);
+                        tempPiece = new ChessPiece(null, null);
                         break;
                 }
                 if(row==0) {
@@ -225,6 +230,9 @@ public class ChessBoard {
 
     public ChessPosition findKing(ChessGame.TeamColor teamColor) {
         for (int i = 0; i < 64; i++) {
+            if(getPiece(indexToPosition(i)) == null) {
+                continue;
+            }
             if(getPiece(indexToPosition(i)).getPieceType() != ChessPiece.PieceType.KING)
                 continue;
             if(getPiece(indexToPosition(i)).getTeamColor() == teamColor)
@@ -235,44 +243,43 @@ public class ChessBoard {
     public void handleKingEdgeCase(ChessPosition position) {
         int row = position.getRow();
         int col = position.getColumn();
+        int[][] directions = {{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1} };
         if(getPiece(position).getTeamColor() == ChessGame.TeamColor.BLACK) {
-            getPiece(new ChessPosition(row+1, col+1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row+1, col-1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row-1, col+1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row-1, col-1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row, col+1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row, col-1)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row+1, col)).setUnderBlackAttack(true);
-            getPiece(new ChessPosition(row-1, col)).setUnderBlackAttack(true);
+            for (int[] direction: directions) {
+                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8)
+                    getPiece(new ChessPosition(direction[0]+row, direction[1]+col)).setUnderWhiteAttack(true);
+            }
         }
         if(getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
-            getPiece(new ChessPosition(row+1, col+1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row+1, col-1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row-1, col+1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row-1, col-1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row, col+1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row, col-1)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row+1, col)).setUnderWhiteAttack(true);
-            getPiece(new ChessPosition(row-1, col)).setUnderWhiteAttack(true);
-        }
-    }
-    public void generateUnderAttack() {
-        for (int i = 0; i < 64; i++) {
-            ChessPiece tempPiece = getPiece(indexToPosition(i));
-            if(tempPiece.getPieceType() == ChessPiece.PieceType.KING){
-                handleKingEdgeCase(indexToPosition(i));
-                continue;
-            }
-            for(ChessMove move : tempPiece.pieceMoves(this, indexToPosition(i), true)) {
-                if(tempPiece.getTeamColor() == ChessGame.TeamColor.WHITE)
-                    getPiece(move.getEndPosition()).setUnderWhiteAttack(true);
-                if(tempPiece.getTeamColor() == ChessGame.TeamColor.BLACK)
-                    getPiece(move.getEndPosition()).setUnderBlackAttack(true);
+            for (int[] direction: directions) {
+                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8)
+                    getPiece(new ChessPosition(direction[0]+row, direction[1]+col)).setUnderBlackAttack(true);
             }
         }
     }
-    public boolean underAttack(ChessPosition kingPos, ChessGame.TeamColor teamColor) {
-        generateUnderAttack();
+
+    void testMove(ChessMove move) /*throws InvalidMoveException*/ {
+        if(move == null)
+            return;
+        //if(getPiece(move.getStartPosition()).pieceMoves(this, move.getStartPosition(), true).contains(move)) {
+          //  throw new InvalidMoveException();
+        //}
+        if(move.promotionPiece != null) {
+            addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+            addPiece(move.getStartPosition(), new ChessPiece(null, null));
+        } else {
+            addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), getPiece(move.getStartPosition()).getPieceType()));
+            addPiece(move.getStartPosition(), new ChessPiece(null, null));
+        }
+    }
+    public boolean underAttack(ChessGame.TeamColor teamColor, ChessMove testMove) {
+        ChessPosition kingPos = findKing(teamColor);
+        //try {
+            testMove(testMove);
+        //} catch (InvalidMoveException e) {
+        //    throw new RuntimeException(e);
+        //}
+        //generateUnderAttack();
         if(teamColor == ChessGame.TeamColor.WHITE){
             if(getPiece(kingPos).isUnderBlackAttack())
                 return true;
@@ -293,7 +300,7 @@ public class ChessBoard {
             }
             if(getPiece(indexToPosition(i)).getTeamColor() != opponentColor)
                 continue;
-            if(getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.NONE)
+            if(getPiece(indexToPosition(i)).getPieceType() == null)
                 continue;
             for(ChessMove move : getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i))) {
                 if (move.getEndPosition() == kingPos)
