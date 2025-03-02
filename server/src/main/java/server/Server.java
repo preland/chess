@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.DataAccessException;
 import spark.*;
 
 public class Server {
@@ -11,10 +12,18 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
+
         //register user
         Spark.post("/user", (request, response) -> {
+            try{
+                String body = UserHandler.RegisterHandler(request.body());
+                response.status(200);
+                return body;
+            } catch (Exception e) {
+                response.status(404);
+            }
             response.status(200);
-            return "hello";
+            return "Uncaught Exception!";
         });
         //login
         Spark.post("/session", (request, response) -> {

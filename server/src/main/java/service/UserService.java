@@ -1,9 +1,11 @@
 package service;
 
 public class UserService {
-    public RegisterResult register(RegisterRequest registerRequest) throws ServiceException {
-
+    public static RegisterResult register(RegisterRequest registerRequest) throws ServiceException {
+        throw new ServiceException("a");
     }
-    public LoginResult login(LoginRequest loginRequest) {}
-    public void logout(LogoutRequest logoutRequest) {}
+    public static LoginResult login(LoginRequest loginRequest) throws ServiceException {
+        throw new ServiceException("a");
+    }
+    public static void logout(LogoutRequest logoutRequest) {}
 }
