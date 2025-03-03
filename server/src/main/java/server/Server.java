@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.DataAccessException;
+import service.ServiceException;
 import spark.*;
 
 public class Server {
@@ -19,7 +20,7 @@ public class Server {
                 String body = UserHandler.RegisterHandler(request.body());
                 response.status(200);
                 return body;
-            } catch (Exception e) {
+            } catch (ServiceException e) {
                 response.status(404);
             }
             response.status(200);

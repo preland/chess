@@ -1,4 +1,5 @@
 import chess.*;
+import dataaccess.MemoryDAO;
 import server.Server;
 
 import java.util.UUID;
