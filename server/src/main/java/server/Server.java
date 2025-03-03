@@ -21,15 +21,20 @@ public class Server {
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
-                response.status(404);
+                response.status(Integer.parseInt(e.code));
+                return e.body;
             }
-            response.status(200);
-            return "Uncaught Exception!";
         });
         //login
         Spark.post("/session", (request, response) -> {
-            response.status(200);
-            return "jello";
+            try{
+                String body = UserHandler.LoginHandler(request.body());
+                response.status(200);
+                return body;
+            } catch (ServiceException e) {
+                response.status(Integer.parseInt(e.code));
+                return e.body;
+            }
         });
         //logout
         Spark.delete("/session", (request, response) -> {
@@ -54,7 +59,7 @@ public class Server {
         //clear database
         Spark.delete("/db", (request, response) -> {
             response.status(200);
-            return "tello";
+            return "{}";
         });
 
         Spark.awaitInitialization();

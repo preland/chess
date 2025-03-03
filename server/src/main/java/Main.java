@@ -10,7 +10,5 @@ public class Main {
         Server server = new Server();
         server.run(8080);
     }
-    public static String generateToken() {
-        return UUID.randomUUID().toString();
-    }
+
 }
