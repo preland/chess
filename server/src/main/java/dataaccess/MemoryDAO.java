@@ -48,8 +48,9 @@ public class MemoryDAO {
         if(getUser(username) == null){
             users.add(new UserData(username, password, email));
         }
-        else
+        else {
             throw new DataAccessException("403", "{\"message\": \"Error: already taken\"}");
+        }
     }
     public UserData getUser(String username) {
         return users.stream().filter(e -> e.username().equals(username)).findFirst().orElse(null);

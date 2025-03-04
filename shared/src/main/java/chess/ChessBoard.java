@@ -154,12 +154,6 @@ public class ChessBoard implements Cloneable{
                     "PPPPPPPP\n" +
                     "RNBQKBNR\n";
             ChessPiece tempPiece = null;
-            /*(StringBuilder res = new StringBuilder();
-            char[] ch = res.append(layout)
-                .reverse()
-                .toString()
-                .replaceAll("\\s+","")
-                .toCharArray();*/
             int row =8;
             int col =1;
             boolean stupdifix = false;
@@ -279,7 +273,8 @@ public class ChessBoard implements Cloneable{
             addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
             addPiece(move.getStartPosition(), null);
         } else {
-            addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), getPiece(move.getStartPosition()).getPieceType()));
+            addPiece(move.getEndPosition(), new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), 
+                  getPiece(move.getStartPosition()).getPieceType()));
             addPiece(move.getStartPosition(), null);
         }
     }

@@ -144,7 +144,6 @@ public class ChessGame {
             return !isInCheck(teamColor);
         }
         return false;
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
