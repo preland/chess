@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -50,11 +51,14 @@ public class MemoryDAO {
     public UserData getUser(String username) {
         return users.stream().filter(e -> e.username().equals(username)).findFirst().orElse(null);
     }
-    public void createGame() throws DataAccessException{
-        //todo: check auth
+    public GameData createGame(String authorization, String gameName) throws DataAccessException{
+        AuthData verify = getAuth(authorization);
+        GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
+        games.add(game);
+        return game;
     }
     public List<GameData> listGames(String authorization) throws DataAccessException{
-        //todo: check auth
+        AuthData verify = getAuth(authorization);
         return games;
     }
     public void updateGame() throws DataAccessException{
@@ -69,7 +73,12 @@ public class MemoryDAO {
         return getAuth(authToken);
     }
     public AuthData getAuth(String authToken) throws DataAccessException{
-        return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow( () -> new DataAccessException("403", "{\"message\": \"Error: (description of error)\"}"));
+        System.out.println("n: " + authToken);
+        for(AuthData a : auths) {
+            System.out.println(a.authToken());
+        }
+        //System.out.println("oop: "+ auth);
+        return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow( () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
     }
     public void deleteAuth(String authorization) throws DataAccessException {
         //todo: throw exception sometimes?

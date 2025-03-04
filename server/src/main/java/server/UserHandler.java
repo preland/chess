@@ -9,7 +9,7 @@ public class UserHandler {
         var serializer = new Gson();
         RegisterRequest reg = serializer.fromJson(request, RegisterRequest.class);
         RegisterResult result = UserService.register(reg);
-        System.out.println(result);
+       //System.out.println(result);
         return serializer.toJson(result);
     }
     public static String LoginHandler(String request) throws ServiceException{
@@ -19,9 +19,12 @@ public class UserHandler {
         return serializer.toJson(result);
     }
     public static String LogoutHandler(String request) throws ServiceException{
+        System.out.println("1 "+request);
         var serializer = new Gson();
-        LogoutRequest reg = serializer.fromJson(request, LogoutRequest.class);
-        //UserService.logout(reg);
-        return "idk what to do here yet";
+        LogoutRequest reg = serializer.fromJson("{ authorization: \"" + request + "\" }", LogoutRequest.class);
+
+
+        UserService.logout(reg);
+        return "{}";
     }
 }

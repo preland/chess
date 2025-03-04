@@ -32,5 +32,15 @@ public class UserService {
             throw new ServiceException(e.code, e.body);
         }
     }
-    public static void logout(LogoutRequest logoutRequest) {}
+    public static void logout(LogoutRequest logoutRequest) throws ServiceException {
+        MemoryDAO memdb = MemoryDAO.getInstance();
+        String auth = logoutRequest.authorization();
+        try {
+            System.out.println(auth);
+            AuthData verify = memdb.getAuth(auth);
+            memdb.deleteAuth(auth);
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.code, e.body);
+        }
+    }
 }
