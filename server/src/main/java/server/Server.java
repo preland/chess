@@ -34,7 +34,7 @@ public class Server {
         //register user
         Spark.post("/user", (request, response) -> {
             try{
-                String body = UserHandler.RegisterHandler(request.body());
+                String body = UserHandler.registerHandler(request.body());
                 response.status(200);
                 System.out.println(body);
                 return body;
@@ -46,7 +46,7 @@ public class Server {
         //login
         Spark.post("/session", (request, response) -> {
             try{
-                String body = UserHandler.LoginHandler(request.body());
+                String body = UserHandler.loginHandler(request.body());
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
@@ -60,7 +60,7 @@ public class Server {
                 System.out.println(header + ": " + request.headers(header));
             });
             try{
-                String body = UserHandler.LogoutHandler(request.headers("authorization"));
+                String body = UserHandler.logoutHandler(request.headers("authorization"));
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
@@ -74,7 +74,7 @@ public class Server {
                 System.out.println(header + ": " + request.headers(header));
             });
             try{
-                String body = GameHandler.ListGameHandler(request.headers("authorization"));
+                String body = GameHandler.listGameHandler(request.headers("authorization"));
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
@@ -93,7 +93,7 @@ public class Server {
                 JsonObject json = JsonParser.parseString(request.body()).getAsJsonObject();
                 json.addProperty("authorization", auth);
                 String req = serializer.toJson(json);
-                String body = GameHandler.CreateGameHandler(req);
+                String body = GameHandler.createGameHandler(req);
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
@@ -112,7 +112,7 @@ public class Server {
                 JsonObject json = JsonParser.parseString(request.body()).getAsJsonObject();
                 json.addProperty("authorization", auth);
                 String req = serializer.toJson(json);
-                String body = GameHandler.JoinGameHandler(req);
+                String body = GameHandler.joinGameHandler(req);
                 response.status(200);
                 return body;
             } catch (ServiceException e) {
@@ -123,7 +123,7 @@ public class Server {
         //clear database
         Spark.delete("/db", (request, response) -> {
             response.status(200);
-            GameHandler.ClearDatabaseHandler();
+            GameHandler.clearDatabaseHandler();
             return "{}";
         });
 
