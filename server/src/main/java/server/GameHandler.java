@@ -20,6 +20,22 @@ public class GameHandler {
         //System.out.println(result);
         return serializer.toJson(result);
     }
+    public static String JoinGameHandler(String request) throws ServiceException{
+        //System.out.println(authorization);
+        var serializer = new Gson();
+        JoinGameRequest reg = serializer.fromJson(request, JoinGameRequest.class);
+        JoinGameResult result = GameService.joinGame(reg);
+        //System.out.println(result);
+        return serializer.toJson(result);
+    }
+    public static String ListGameHandler(String request) throws ServiceException{
+        System.out.println(request);
+        var serializer = new Gson();
+        ListGamesRequest reg = new ListGamesRequest(request);//serializer.fromJson(request, ListGamesRequest.class);
+        ListGamesResult result = GameService.listGames(reg);
+        //System.out.println(result);
+        return serializer.toJson(result);
+    }
     public static String ClearDatabaseHandler() throws ServiceException {
         MemoryDAO memdb = MemoryDAO.getInstance();
         try {

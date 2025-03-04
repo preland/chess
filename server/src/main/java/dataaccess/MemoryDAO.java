@@ -61,8 +61,33 @@ public class MemoryDAO {
         AuthData verify = getAuth(authorization);
         return games;
     }
-    public void updateGame() throws DataAccessException{
-        //todo: this will be fun .-.
+    public void updateGame(String authorization, String username, String playerColor, int gameID) throws DataAccessException{
+        String whiteUser = null;
+        String blackUser = null;
+        System.out.println(playerColor);
+        if(playerColor == null)
+            throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+        GameData old = games.stream().filter(e -> e.gameID()==gameID).findFirst().orElseThrow(() -> new DataAccessException("400", "{\"message\": \"Error: bad request\"}"));
+        switch(playerColor) {
+            case "WHITE":
+                if(old.whiteUsername() != null)
+                    throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                whiteUser = username;
+                blackUser = old.blackUsername();
+                break;
+            case "BLACK":
+                if(old.blackUsername() != null)
+                    throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                blackUser = username;
+                whiteUser = old.whiteUsername();
+                break;
+            default:
+                throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+        }
+        String finalWhiteUser = whiteUser;
+        String finalBlackUser = blackUser;
+        games.replaceAll(e -> e.gameID() == gameID ? new GameData(gameID, finalWhiteUser, finalBlackUser, e.gameName(), e.game()) : e);
+
     }
     public AuthData createAuth(String username, String password) throws DataAccessException{
         //todo: this is probably wrong

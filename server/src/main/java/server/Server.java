@@ -70,8 +70,17 @@ public class Server {
         });
         //list games
         Spark.get("/game", (request, response) -> {
-            response.status(200);
-            return "yello";
+            request.headers().forEach(header -> {
+                System.out.println(header + ": " + request.headers(header));
+            });
+            try{
+                String body = GameHandler.ListGameHandler(request.headers("authorization"));
+                response.status(200);
+                return body;
+            } catch (ServiceException e) {
+                response.status(Integer.parseInt(e.code));
+                return e.body;
+            }
         });
         //create game
         Spark.post("/game", (request, response) -> {
@@ -94,8 +103,22 @@ public class Server {
         });
         //join game
         Spark.put("/game", (request, response) -> {
-            response.status(200);
-            return "rello";
+            request.headers().forEach(header -> {
+                System.out.println(header + ": " + request.headers(header));
+            });
+            try{
+                var serializer = new Gson();
+                String auth = request.headers("authorization");
+                JsonObject json = JsonParser.parseString(request.body()).getAsJsonObject();
+                json.addProperty("authorization", auth);
+                String req = serializer.toJson(json);
+                String body = GameHandler.JoinGameHandler(req);
+                response.status(200);
+                return body;
+            } catch (ServiceException e) {
+                response.status(Integer.parseInt(e.code));
+                return e.body;
+            }
         });
         //clear database
         Spark.delete("/db", (request, response) -> {
