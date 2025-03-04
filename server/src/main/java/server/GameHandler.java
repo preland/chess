@@ -7,12 +7,6 @@ import service.*;
 import service.requestresult.*;
 
 public class GameHandler {
-    public static String listGamesHandler(String request) {
-        return "lol";
-    }
-    public static String getGameHandler(String request) {
-        return "lol";
-    }
     public static String createGameHandler(String request) throws ServiceException{
         //System.out.println(authorization);
         var serializer = new Gson();
