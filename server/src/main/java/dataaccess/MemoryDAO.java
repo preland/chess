@@ -29,8 +29,9 @@ public class MemoryDAO {
     }
 
     public static MemoryDAO getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new MemoryDAO();
+        }
 
         return instance;
     }
@@ -41,10 +42,12 @@ public class MemoryDAO {
         auths.clear();
     }
     public void createUser(String username, String password, String email) throws DataAccessException{
-        if(username == null || password == null || email == null)
+        if(username == null || password == null || email == null){
             throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
-        if(getUser(username) == null)
+        }
+        if(getUser(username) == null){
             users.add(new UserData(username, password, email));
+        }
         else
             throw new DataAccessException("403", "{\"message\": \"Error: already taken\"}");
     }
@@ -65,19 +68,23 @@ public class MemoryDAO {
         String whiteUser = null;
         String blackUser = null;
         System.out.println(playerColor);
-        if(playerColor == null)
+        if(playerColor == null){
             throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
-        GameData old = games.stream().filter(e -> e.gameID()==gameID).findFirst().orElseThrow(() -> new DataAccessException("400", "{\"message\": \"Error: bad request\"}"));
+        }
+        GameData old = games.stream().filter(e -> e.gameID()==gameID).findFirst().orElseThrow(
+            () -> new DataAccessException("400", "{\"message\": \"Error: bad request\"}"));
         switch(playerColor) {
             case "WHITE":
-                if(old.whiteUsername() != null)
+                if(old.whiteUsername() != null){
                     throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                }
                 whiteUser = username;
                 blackUser = old.blackUsername();
                 break;
             case "BLACK":
-                if(old.blackUsername() != null)
+                if(old.blackUsername() != null){
                     throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                }
                 blackUser = username;
                 whiteUser = old.whiteUsername();
                 break;
@@ -91,7 +98,8 @@ public class MemoryDAO {
     }
     public AuthData createAuth(String username, String password) throws DataAccessException{
         //todo: this is probably wrong
-        UserData user = users.stream().filter(e -> e.username().equals(username)).filter(e -> e.password().equals(password)).findFirst().orElseThrow( () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
+        UserData user = users.stream().filter(e -> e.username().equals(username)).filter(e -> e.password().equals(password)).findFirst().orElseThrow(
+            () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
         //at this point user should be proven to exist with given password
         String authToken = generateToken();
         auths.add(new AuthData(authToken, user.username()));
@@ -103,7 +111,8 @@ public class MemoryDAO {
             System.out.println(a.authToken());
         }
         //System.out.println("oop: "+ auth);
-        return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow( () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
+        return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow(
+            () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
     }
     public void deleteAuth(String authorization) throws DataAccessException {
         //todo: throw exception sometimes?

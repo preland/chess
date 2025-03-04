@@ -6,13 +6,13 @@ import dataaccess.MemoryDAO;
 import service.*;
 
 public class GameHandler {
-    public static String ListGamesHandler(String request) {
+    public static String listGamesHandler(String request) {
         return "lol";
     }
-    public static String GetGameHandler(String request) {
+    public static String getGameHandler(String request) {
         return "lol";
     }
-    public static String CreateGameHandler(String request) throws ServiceException{
+    public static String createGameHandler(String request) throws ServiceException{
         //System.out.println(authorization);
         var serializer = new Gson();
         CreateGameRequest reg = serializer.fromJson(request, CreateGameRequest.class);
@@ -20,7 +20,7 @@ public class GameHandler {
         //System.out.println(result);
         return serializer.toJson(result);
     }
-    public static String JoinGameHandler(String request) throws ServiceException{
+    public static String joinGameHandler(String request) throws ServiceException{
         //System.out.println(authorization);
         var serializer = new Gson();
         JoinGameRequest reg = serializer.fromJson(request, JoinGameRequest.class);
@@ -28,7 +28,7 @@ public class GameHandler {
         //System.out.println(result);
         return serializer.toJson(result);
     }
-    public static String ListGameHandler(String request) throws ServiceException{
+    public static String listGameHandler(String request) throws ServiceException{
         System.out.println(request);
         var serializer = new Gson();
         ListGamesRequest reg = new ListGamesRequest(request);//serializer.fromJson(request, ListGamesRequest.class);
@@ -36,7 +36,7 @@ public class GameHandler {
         //System.out.println(result);
         return serializer.toJson(result);
     }
-    public static String ClearDatabaseHandler() throws ServiceException {
+    public static String clearDatabaseHandler() throws ServiceException {
         MemoryDAO memdb = MemoryDAO.getInstance();
         try {
             memdb.clear();

@@ -90,38 +90,44 @@ public class ChessBoard implements Cloneable{
                 }
                 switch (piece.getPieceType()) {
                   case ChessPiece.PieceType.ROOK:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('R');
+                    }
                     else
                       System.out.print('r');
                     break;
                   case ChessPiece.PieceType.KNIGHT:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('N');
+                    }
                     else
                       System.out.print('n');
                     break;
                   case ChessPiece.PieceType.BISHOP:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('B');
+                    }
                     else
                       System.out.print('b');
                     break;
                   case ChessPiece.PieceType.KING:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('K');
+                    }
                     else
                       System.out.print('k');
                     break;
                   case ChessPiece.PieceType.QUEEN:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('Q');
+                    }
                     else
                       System.out.print('q');
                     break;
                   case ChessPiece.PieceType.PAWN:
-                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE)
+                    if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('P');
+                    }
                     else
                       System.out.print('p');
                     break;
@@ -233,10 +239,12 @@ public class ChessBoard implements Cloneable{
             if(getPiece(indexToPosition(i)) == null) {
                 continue;
             }
-            if(getPiece(indexToPosition(i)).getPieceType() != ChessPiece.PieceType.KING)
+            if(getPiece(indexToPosition(i)).getPieceType() != ChessPiece.PieceType.KING){
                 continue;
-            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor)
+            }
+            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor){
                 return indexToPosition(i);
+            }
         }
         return null;
     }
@@ -246,24 +254,24 @@ public class ChessBoard implements Cloneable{
         int[][] directions = {{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1} };
         if(getPiece(position).getTeamColor() == ChessGame.TeamColor.BLACK) {
             for (int[] direction: directions) {
-                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8)
+                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8){
                     getPiece(new ChessPosition(direction[0]+row, direction[1]+col)).setUnderWhiteAttack(true);
+                }
             }
         }
         if(getPiece(position).getTeamColor() == ChessGame.TeamColor.WHITE) {
             for (int[] direction: directions) {
-                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8)
+                if(1 <= direction[0]+row && direction[0]+row < 8 && 1 <= direction[1]+col && direction[1]+col < 8){
                     getPiece(new ChessPosition(direction[0]+row, direction[1]+col)).setUnderBlackAttack(true);
+                }
             }
         }
     }
 
-    void testMove(ChessMove move) /*throws InvalidMoveException*/ {
-        if(move == null)
+    void testMove(ChessMove move) {
+        if(move == null){
             return;
-        //if(getPiece(move.getStartPosition()).pieceMoves(this, move.getStartPosition(), true).contains(move)) {
-          //  throw new InvalidMoveException();
-        //}
+        }
         if(getPiece(move.getStartPosition()) == null) {
             return;
         }
@@ -277,40 +285,20 @@ public class ChessBoard implements Cloneable{
     }
     public boolean underAttack(ChessGame.TeamColor teamColor, ChessMove testMove) {
         ChessPosition kingPos = findKing(teamColor);
-        //try {
-         //   testMove(testMove);
-        //} catch (InvalidMoveException e) {
-        //    throw new RuntimeException(e);
-        //}
-        //generateUnderAttack();
-        /*if(teamColor == ChessGame.TeamColor.WHITE){
-            if(getPiece(kingPos).isUnderBlackAttack())
-                return true;
-        }
-        if(teamColor == ChessGame.TeamColor.BLACK){
-            return getPiece(kingPos).isUnderWhiteAttack();
-        }*/
-
-        //Collection<int> skipIter;
         for (int i = 0; i < 64; i++) {
-
-            /*if((getPiece(indexToPosition(i)).getPieceType() == ChessPiece.PieceType.KING)){
-                if (abs((i/8)+1 - kingPos.getRow()) == 1 || abs((i%8)+1 - kingPos.getColumn()) == 1) {
-                    return true;
-                }
-                else
-                    return false
-            }*/
             if(getPiece(indexToPosition(i)) == null) {
                 continue;
             }
-            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor)
+            if(getPiece(indexToPosition(i)).getTeamColor() == teamColor){
                 continue;
-            if(getPiece(indexToPosition(i)).getPieceType() == null)
+            }
+            if(getPiece(indexToPosition(i)).getPieceType() == null){
                 continue;
+            }
             for(ChessMove move : getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i))) {
-                if (move.getEndPosition().equals(kingPos))
+                if (move.getEndPosition().equals(kingPos)){
                     return true;
+                }
             }
         }
         return false;
