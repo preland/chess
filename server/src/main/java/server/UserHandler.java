@@ -1,8 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import service.*;
+import service.request_result.*;
 
 public class UserHandler {
     public static String registerHandler(String request) throws ServiceException {

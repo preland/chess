@@ -93,43 +93,49 @@ public class ChessBoard implements Cloneable{
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('R');
                     }
-                    else
+                    else{
                       System.out.print('r');
+                    }
                     break;
                   case ChessPiece.PieceType.KNIGHT:
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('N');
                     }
-                    else
+                    else{
                       System.out.print('n');
+                    }
                     break;
                   case ChessPiece.PieceType.BISHOP:
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('B');
                     }
-                    else
+                    else{
                       System.out.print('b');
+                    }
                     break;
                   case ChessPiece.PieceType.KING:
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('K');
                     }
-                    else
+                    else{
                       System.out.print('k');
+                    }
                     break;
                   case ChessPiece.PieceType.QUEEN:
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('Q');
                     }
-                    else
+                    else{
                       System.out.print('q');
+                    }
                     break;
                   case ChessPiece.PieceType.PAWN:
                     if(piece.getTeamColor()==ChessGame.TeamColor.WHITE){
                       System.out.print('P');
                     }
-                    else
+                    else{
                       System.out.print('p');
+                    }
                     break;
                   default:
                     System.out.print('+');

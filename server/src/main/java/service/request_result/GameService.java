@@ -1,10 +1,10 @@
-package service;
+package service.request_result;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDAO;
 import model.GameData;
+import service.ServiceException;
 
-import java.security.Provider;
 import java.util.List;
 
 public class GameService {

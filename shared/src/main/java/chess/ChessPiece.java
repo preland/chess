@@ -99,7 +99,7 @@ public class ChessPiece {
         SOUTHEAST,
         SOUTHWEST
     }
-    int checkPosition(ChessBoard board, int oidx, int idx, int m, boolean diagonal) {
+    public static int checkPosition(ChessBoard board, int oidx, int idx, int m, boolean diagonal) {
         int orow = oidx /8;
         int ocol = oidx%8;
         int nrow = idx / 8;
@@ -131,7 +131,7 @@ public class ChessPiece {
         }
         return 1;
     }
-    int checkDirection(ChessBoard board, ChessPosition position, int m, Direction d) {
+    public static int checkDirection(ChessBoard board, ChessPosition position, int m, Direction d) {
 
         int ret = 0;
         switch(d) {
@@ -252,21 +252,21 @@ public class ChessPiece {
             dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
 
             if(nv%2==1 && !nb) {
-                    validMoves.add(new ChessMove(myPosition, 
-                          board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
+                validMoves.add(new ChessMove(myPosition, 
+                    board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
             }
 
             if(sv%2==1 && !sb) {
-                    validMoves.add(new ChessMove(myPosition, 
-                          board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), null));
+                validMoves.add(new ChessMove(myPosition, 
+                    board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), null));
             }
 
             if(ev%2==1 && !eb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), null));
             }
 
             if(wv%2==1 && !wb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), null));
             }
             nb = nbt;
             sb = sbt;
@@ -292,19 +292,19 @@ public class ChessPiece {
             int wv = (checkDirection(board, myPosition, i, Direction.NORTHWEST));
             dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
             if(nv%2==1 && !nb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), null));
             }
 
             if(sv%2==1 && !sb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), null));
             }
 
             if(ev%2==1 && !eb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), null));
             }
 
             if(wv%2==1 && !wb) {
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), null));
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), null));
             }
             nb = nbt;
             sb = sbt;
@@ -383,13 +383,8 @@ public class ChessPiece {
         boolean ebt = false;
         boolean wbt = false;
         for (int i = 1; i < 9; i++) {
-        if(!dothing1(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves)) {
-            break;
-        }
-        //todo: do thing goes here
-                    if(nb || sb || eb || wb) {
-                System.out.print("blocking on: " + nb + sb + eb + wb);
-                System.out.println(i);
+            if(!dothing1(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves)) {
+                break;
             }
         }
         nb = false;
@@ -401,13 +396,8 @@ public class ChessPiece {
         ebt = false;
         wbt = false;
         for (int i = 1; i < 9; i++) {
-        if(!dothing1(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves)) {
-            break;
-        }
-        //todo: do thing goes here
-                    if(nb || sb || eb || wb) {
-                System.out.print("blocking on: " + nb + sb + eb + wb);
-                System.out.println(i);
+            if(!dothing1(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves)) {
+                break;
             }
         }
         return validMoves;
@@ -584,15 +574,11 @@ public class ChessPiece {
             System.out.println(row2);
             System.out.print("result");
             System.out.println(abs(col1-col2)+abs(row1-row2));
-            if(abs(col1-col2)+abs(row1-row2) == 3) {
-                if(selectedPiece.getPieceType() != null) {
-                    if(board.pieces[i] != null) {
-                        if (selectedPiece.pieceColor == board.pieces[i].pieceColor) {
-                            continue;
-                        }
-                    }
-                    validMoves.add(new ChessMove(myPosition, board.indexToPosition(i), null));
+            if((abs(col1-col2)+abs(row1-row2) == 3) && selectedPiece.getPieceType() != null) {
+                if((board.pieces[i] != null) && selectedPiece.pieceColor == board.pieces[i].pieceColor ) {
+                        continue;
                 }
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(i), null));
             }
 
         }
@@ -634,166 +620,24 @@ public class ChessPiece {
                 wbt = wv > 2;
             }
             if(nv==1 && !nb && board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
-                if((board.positionToIndex(myPosition)+(8*i)) > 55){
-                    if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null))) {
-                            break;
-                    } else {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), PieceType.ROOK));
-                    }
-                } else {
-                    System.out.println((board.positionToIndex(myPosition)+(8*i)) > 55);
-                    if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null))) {
-                            break;
-                    } else {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null));
-                    }
-                }
-                if(myPosition.getRow()==2) {
-                    if(checkDirection(board, myPosition, i+1, Direction.NORTH)==1) {
-                        if((board.positionToIndex(myPosition)+(8*i)) > 55){
-                            if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), null))){
-                                    break;
-                            } else {
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), PieceType.QUEEN));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), PieceType.BISHOP));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), PieceType.KNIGHT));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), PieceType.ROOK));
-                            }
-                        } else {
-                            if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), null))) {
-                                    break;
-                            } else {
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * 2)), null));
-                            }
-                        }
-                    }
-                }
+              //separate all in if
+                ChessHelper.help1(i, board, myPosition, validMoves, checkcheck);
 
             }
 
             if(sv==1 && !sb && board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.BLACK) {
-                System.out.println("he");
-                if((board.positionToIndex(myPosition)-(8*i)) < 8) {
-                    System.out.println("he1");
-                    if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                            break;
-                    } else {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), PieceType.ROOK));
-                    }
-                } else {
-                    System.out.println((board.positionToIndex(myPosition)-(8*i)));
-                    if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                            break;
-                    } else {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null));
-                    }
-                }
-                if(myPosition.getRow()==7) {
-                    if(checkDirection(board, myPosition, i+1, Direction.SOUTH)==1) {
-                        if((board.positionToIndex(myPosition)-(8*2)) < 8){
-                            if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), null))){
-                                    break;
-                            } else {
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), PieceType.QUEEN));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), PieceType.BISHOP));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), PieceType.KNIGHT));
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), PieceType.ROOK));
-                            }
-                        } else {
-                            if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), null))){
-                                    break;
-                            } else{
-                                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * 2)), null));
-                            }
-                        }
-                    }
-                }
+              //separate all in if
+                ChessHelper.help2(i, board, myPosition, validMoves, checkcheck);
             }
 
             if(ev==3 && !eb && i<2) {
-                if(board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
-                    if((board.positionToIndex(myPosition)+(9*i)) > 55){
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), PieceType.QUEEN));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), PieceType.BISHOP));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), PieceType.KNIGHT));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), PieceType.ROOK));
-                        }
-                    } else {
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null));
-                        }
-                    }
-                } else {
-                    if((board.positionToIndex(myPosition)-(9*i)) < 8){
-                        System.out.println(board.positionToIndex(myPosition)-(7*i));
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), PieceType.QUEEN));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), PieceType.BISHOP));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), PieceType.KNIGHT));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), PieceType.ROOK));
-                        }
-                    } else {
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null));
-                        }
-                    }
-                }
+              //separate all in if
+                ChessHelper.help3(i, board, myPosition, validMoves, checkcheck);
             }
 
             if(wv==3 && !wb && i<2) {
-
-                if(board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
-                    if((board.positionToIndex(myPosition)+(7*i)) > 55){
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.QUEEN));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.BISHOP));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.KNIGHT));
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), PieceType.ROOK));
-                        }
-                    } else {
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
-                        }
-                    }
-                } else {
-                    System.out.println("here");
-                    if((board.positionToIndex(myPosition)-(7*i)) < 8){
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
-                                break;
-                        } else {
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), PieceType.ROOK));
-                    }
-                    } else {
-                        System.out.println("her");
-                        if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
-                                break;
-                        } else {
-                            validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null));
-                        }
-                    }
-                }
+            //separate all in if
+                ChessHelper.help4(i, board, myPosition, validMoves, checkcheck);
             }
             nb = nbt;
             sb = sbt;
