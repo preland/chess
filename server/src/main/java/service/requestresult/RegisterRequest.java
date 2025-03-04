@@ -1,4 +1,4 @@
-package service.request_result;
+package service.requestresult;
 
 public record RegisterRequest(String username, String password, String email) {
 }

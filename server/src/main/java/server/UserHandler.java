@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import service.*;
-import service.request_result.*;
+import service.requestresult.*;
 
 public class UserHandler {
     public static String registerHandler(String request) throws ServiceException {

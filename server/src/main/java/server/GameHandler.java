@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDAO;
 import service.*;
-import service.request_result.*;
+import service.requestresult.*;
 
 public class GameHandler {
     public static String listGamesHandler(String request) {

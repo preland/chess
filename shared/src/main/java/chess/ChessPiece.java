@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static chess.ChessHelper.*;
 import static java.lang.Math.abs;
 
 /**
@@ -59,20 +60,6 @@ public class ChessPiece {
         ROOK,
         PAWN
     }
-
-    /**
-     * @return Which team this chess piece belongs to
-     */
-    public ChessGame.TeamColor getTeamColor() {
-        return this.pieceColor;
-    }
-
-    /**
-     * @return which type of chess piece this piece is
-     */
-    public PieceType getPieceType() {
-        return this.type;
-    }
     public boolean isUnderWhiteAttack() {
         return underWhiteAttack;
     }
@@ -89,89 +76,20 @@ public class ChessPiece {
         this.underBlackAttack = underBlackAttack;
     }
 
-    enum Direction {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-        NORTHEAST,
-        NORTHWEST,
-        SOUTHEAST,
-        SOUTHWEST
-    }
-    public static int checkPosition(ChessBoard board, int oidx, int idx, int m, boolean diagonal) {
-        int orow = oidx /8;
-        int ocol = oidx%8;
-        int nrow = idx / 8;
-        int ncol = idx % 8;
-        if(idx>63 | idx<0) {
-            System.out.print(oidx + " " + idx);
-            return 4;
-        }
-        if(diagonal){
-            if (abs(orow-nrow) != m | abs(ocol-ncol) != m ){
-                System.out.print(oidx + ";" + idx);
-
-                return 4;
-            }
-
-         } else if(((((oidx % 8) == 7) && (idx > oidx && idx %8!=7)) | (((oidx % 8) == 0) && (oidx > idx && idx%8!=0))) 
-             | ((((idx % 8) == 7) && (oidx > idx && oidx%8!=7)) | (((idx % 8) == 0) && (idx > oidx && oidx%8!=0)))) {
-            System.out.print(oidx + ":" + idx);
-            return 4;
-        }
-        if(board.pieces[idx] == null) {
-            return 1;
-        }
-        if(board.pieces[idx].getTeamColor() == board.pieces[oidx].getTeamColor()) {
-            return 4;
-        }
-        if(board.pieces[idx].getPieceType() != null) {
-            return 3;
-        }
-        return 1;
-    }
-    public static int checkDirection(ChessBoard board, ChessPosition position, int m, Direction d) {
-
-        int ret = 0;
-        switch(d) {
-            case NORTH -> {
-                ret = checkPosition(board,board.positionToIndex(position), board.positionToIndex(position)+(8*m), m,false);
-                break;
-            }
-            case SOUTH -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)-(8*m), m,false);
-                break;
-            }
-            case EAST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)+m, m,false);
-                break;
-            }
-            case WEST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)-m, m,false);
-                break;
-            }
-            case NORTHEAST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)+(9*m), m,true);
-                break;
-            }
-            case NORTHWEST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)+(7*m), m,true);
-                break;
-            }
-            case SOUTHEAST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)-(7*m), m,true);
-                break;
-            }
-            case SOUTHWEST -> {
-                ret = checkPosition(board, board.positionToIndex(position), board.positionToIndex(position)-(9*m), m,true);
-                break;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + d);
-        }
-        return ret;
-    }
     /**
+     * @return Which team this chess piece belongs to
+     */
+    public ChessGame.TeamColor getTeamColor() {
+        return this.pieceColor;
+    }
+
+    /**
+     * @return which type of chess piece this piece is
+     */
+    public PieceType getPieceType() {
+        return this.type;
+    }
+            /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
@@ -210,21 +128,6 @@ public class ChessPiece {
         }
         return validMoves;
     }
-    public boolean dothing2 (int i, ChessBoard board, ChessPosition myPosition, int nv, int sv, int ev, int wv, boolean nb, boolean sb, boolean eb, boolean wb, boolean nbt, boolean sbt, boolean ebt, boolean wbt) {
-        if(!nb) {
-            nbt = nv>2;
-        }
-        if(!sb) {
-            sbt = sv>2;
-        }
-        if(!eb) {
-            ebt = ev>2;
-        }
-        if(!wb) {
-            wbt = wv>2;
-        }
-        return true;
-    }
     public Collection<ChessMove> handleKingMoves(ChessBoard board, ChessPosition myPosition, boolean checkcheck) {
         ChessBoard testBoard = null;
         try {
@@ -245,10 +148,10 @@ public class ChessPiece {
         boolean ebt = false;
         boolean wbt = false;
         for (int i = 1; i < 2; i++) {
-            int nv = (checkDirection(board, myPosition, i, Direction.NORTHEAST));
-            int sv = (checkDirection(board, myPosition, i, Direction.SOUTHWEST));
-            int ev = (checkDirection(board, myPosition, i, Direction.SOUTHEAST));
-            int wv = (checkDirection(board, myPosition, i, Direction.NORTHWEST));
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHEAST));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHWEST));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHEAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHWEST));
             dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
 
             if(nv%2==1 && !nb) {
@@ -272,10 +175,6 @@ public class ChessPiece {
             sb = sbt;
             eb = ebt;
             wb = wbt;
-            if(nb || sb || eb || wb) {
-                System.out.print("blocking on: " + nb + sb + eb + wb);
-                System.out.println(i);
-            }
         }
         nb = false;
         sb = false;
@@ -286,10 +185,10 @@ public class ChessPiece {
         ebt = false;
         wbt = false;
         for (int i = 1; i < 2; i++) {
-            int nv = (checkDirection(board, myPosition, i, Direction.NORTHEAST));
-            int sv = (checkDirection(board, myPosition, i, Direction.SOUTHWEST));
-            int ev = (checkDirection(board, myPosition, i, Direction.SOUTHEAST));
-            int wv = (checkDirection(board, myPosition, i, Direction.NORTHWEST));
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHEAST));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHWEST));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHEAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHWEST));
             dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
             if(nv%2==1 && !nb) {
                 validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), null));
@@ -310,69 +209,10 @@ public class ChessPiece {
             sb = sbt;
             eb = ebt;
             wb = wbt;
-            if(nb || sb || eb || wb) {
-                System.out.print("blocking on: " + nb + sb + eb + wb);
-                System.out.println(i);
-            }
         }
         return validMoves;
     }
-    public boolean dothing1 (int i, ChessBoard board, ChessPosition myPosition, boolean nb, boolean sb, boolean eb, boolean wb,
-                          boolean nbt, boolean sbt, boolean ebt, boolean wbt, boolean checkcheck, Collection<ChessMove> validMoves) {
-          int nv = (checkDirection(board, myPosition, i, Direction.NORTH));
-          int sv = (checkDirection(board, myPosition, i, Direction.SOUTH));
-          int ev = (checkDirection(board, myPosition, i, Direction.EAST));
-          int wv = (checkDirection(board, myPosition, i, Direction.WEST));
-          if (!nb) {
-              nbt = nv > 2;
-          }
-          if (!sb) {
-              sbt = sv > 2;
-          }
-          if (!eb) {
-              ebt = ev > 2;
-          }
-          if (!wb) {
-              wbt = wv > 2;
-          }
-          if (nv % 2 == 1 && !nb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                  return false;
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null));
-              }
-          }
-
-          if (sv % 2 == 1 && !sb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                  return false;
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null));
-              }
-          }
-
-          if (ev % 2 == 1 && !eb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (i)), null))) {
-                  return false;
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + i), null));
-              }
-          }
-
-          if (wv % 2 == 1 && !wb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
-                  return false;
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - i), null));
-              }
-          }
-          nb = nbt;
-          sb = sbt;
-          eb = ebt;
-          wb = wbt;
-          return true;
-      }
-    public Collection<ChessMove> handleQueenMoves(ChessBoard board, ChessPosition myPosition, boolean checkcheck) {
+        public Collection<ChessMove> handleQueenMoves(ChessBoard board, ChessPosition myPosition, boolean checkcheck) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         boolean nb = false;
         boolean sb = false;
@@ -414,10 +254,10 @@ public class ChessPiece {
         boolean wbt = false;
 
         for (int i = 1; i < 9; i++) {
-            int nv = (checkDirection(board, myPosition, i, Direction.NORTH));
-            int sv = (checkDirection(board, myPosition, i, Direction.SOUTH));
-            int ev = (checkDirection(board, myPosition, i, Direction.EAST));
-            int wv = (checkDirection(board, myPosition, i, Direction.WEST));
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTH));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTH));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.EAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.WEST));
             if(!nb) {
                 nbt = nv>2;
             }
@@ -431,7 +271,8 @@ public class ChessPiece {
                 wbt = wv>2;
             }
             if(nv%2==1 && !nb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null));
@@ -439,7 +280,8 @@ public class ChessPiece {
             }
 
             if(sv%2==1 && !sb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null));
@@ -447,7 +289,8 @@ public class ChessPiece {
             }
 
             if(ev%2==1 && !eb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + i), null));
@@ -455,7 +298,8 @@ public class ChessPiece {
             }
 
             if(wv%2==1 && !wb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - i), null));
@@ -483,10 +327,10 @@ public class ChessPiece {
         boolean ebt = false;
         boolean wbt = false;
         for (int i = 1; i < 9; i++) {
-            int nv = (checkDirection(board, myPosition, i, Direction.NORTHEAST));
-            int sv = (checkDirection(board, myPosition, i, Direction.SOUTHWEST));
-            int ev = (checkDirection(board, myPosition, i, Direction.SOUTHEAST));
-            int wv = (checkDirection(board, myPosition, i, Direction.NORTHWEST));
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHEAST));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHWEST));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHEAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHWEST));
             if(!nb) {
                 nbt = nv>2;
             }
@@ -500,7 +344,8 @@ public class ChessPiece {
                 wbt = wv>2;
             }
             if(nv%2==1 && !nb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
@@ -508,7 +353,8 @@ public class ChessPiece {
             }
 
             if(sv%2==1 && !sb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (9 * i)), null));
@@ -516,7 +362,8 @@ public class ChessPiece {
             }
 
             if(ev%2==1 && !eb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (7 * i)), null));
@@ -524,7 +371,8 @@ public class ChessPiece {
             }
 
             if(wv%2==1 && !wb) {
-                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
+                if(checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
+                        board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null))) {
                         break;
                 } else {
                     validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (7 * i)), null));
@@ -595,17 +443,17 @@ public class ChessPiece {
         boolean ebt = false;
         boolean wbt = false;
         for (int i = 1; i < 2; i++) {
-            int nv = (checkDirection(board, myPosition, i, Direction.NORTH));
-            int sv = (checkDirection(board, myPosition, i, Direction.SOUTH));
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTH));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTH));
             int ev;
             int wv;
             if(board.getPiece(myPosition).getTeamColor()== ChessGame.TeamColor.WHITE) {
-                ev = (checkDirection(board, myPosition, i, Direction.NORTHWEST));
-                wv = (checkDirection(board, myPosition, i, Direction.NORTHEAST));
+                ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHWEST));
+                wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHEAST));
             }
             else {
-                ev = (checkDirection(board, myPosition, i, Direction.SOUTHEAST));
-                wv = (checkDirection(board, myPosition, i, Direction.SOUTHWEST));
+                ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHEAST));
+                wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHWEST));
             }
             if(!nb) {
                 nbt = nv>2;
@@ -643,10 +491,6 @@ public class ChessPiece {
             sb = sbt;
             eb = ebt;
             wb = wbt;
-            if(nb || sb || eb || wb) {
-                System.out.print("blocking on: " + nb + sb + eb + wb);
-                System.out.println(i);
-            }
         }
         return validMoves;
     }

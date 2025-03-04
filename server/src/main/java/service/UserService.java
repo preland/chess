@@ -3,7 +3,7 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDAO;
 import model.AuthData;
-import service.request_result.*;
+import service.requestresult.*;
 
 public class UserService {
     public static RegisterResult register(RegisterRequest registerRequest) throws ServiceException {
