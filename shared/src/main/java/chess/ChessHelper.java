@@ -180,62 +180,6 @@ public class ChessHelper {
         }
         return new HelpReturn(i, board, myPosition, validMoves, checkcheck, true);
     }
-    /*public static Thing1Return dothing1 (int i, ChessBoard board, ChessPosition myPosition, boolean nb, boolean sb, boolean eb, boolean wb,
-                          boolean nbt, boolean sbt, boolean ebt, boolean wbt, boolean checkcheck, Collection<ChessMove> validMoves) {
-
-          if (!nb) {
-              nbt = nv > 2;
-          }
-          if (!sb) {
-              sbt = sv > 2;
-          }
-          if (!eb) {
-              ebt = ev > 2;
-          }
-          if (!wb) {
-              wbt = wv > 2;
-          }
-          if (nv % 2 == 1 && !nb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
-                      board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                  return new Thing1Return(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves, false);
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + (8 * i)), null));
-              }
-          }
-
-          if (sv % 2 == 1 && !sb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
-                      board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null))) {
-                  return new Thing1Return(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves, false);
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - (8 * i)), null));
-              }
-          }
-
-          if (ev % 2 == 1 && !eb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
-                      board.indexToPosition(board.positionToIndex(myPosition) + (i)), null))) {
-                  return new Thing1Return(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves, false);
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) + i), null));
-              }
-          }
-
-          if (wv % 2 == 1 && !wb) {
-              if (checkcheck == false && board.underAttack(board.getPiece(myPosition).getTeamColor(), new ChessMove(myPosition, 
-                      board.indexToPosition(board.positionToIndex(myPosition) - (i)), null))) {
-                  return new Thing1Return(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves, false);
-              } else {
-                  validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition) - i), null));
-              }
-          }
-          nb = nbt;
-          sb = sbt;
-          eb = ebt;
-          wb = wbt;
-        return new Thing1Return(i, board, myPosition, nb, sb, eb, wb, nbt, sbt, ebt, wbt, checkcheck, validMoves, true);
-      }*/
   public static Thing2Return dothing2 (int i, ChessBoard board, ChessPosition myPosition, int nv, int sv, int ev, int wv,
         boolean nb, boolean sb, boolean eb, boolean wb, boolean nbt, boolean sbt, boolean ebt, boolean wbt) {
         if(!nb) {
@@ -323,6 +267,77 @@ public class ChessHelper {
             default -> throw new IllegalStateException("Unexpected value: " + d);
         }
         return ret;
+    }
+    public static Collection<ChessMove> kingQueenCheckDiagonals(int size, ChessBoard board, ChessPosition myPosition, 
+        Collection<ChessMove> validMoves, boolean nb, boolean sb, boolean eb, boolean wb, boolean nbt, boolean sbt, boolean ebt, boolean wbt) {
+        for (int i = 1; i < size + 1; i++) {
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHEAST));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHWEST));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTHEAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTHWEST));
+            Thing2Return ret = dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
+            nbt = ret.nbt();
+            sbt = ret.sbt();
+            ebt = ret.ebt();
+            wbt = ret.wbt();
+
+            if(nv%2==1 && !nb) {
+                validMoves.add(new ChessMove(myPosition,
+                        board.indexToPosition(board.positionToIndex(myPosition) + (9 * i)), null));
+            }
+
+            if(sv%2==1 && !sb) {
+                validMoves.add(new ChessMove(myPosition,
+                        board.indexToPosition(board.positionToIndex(myPosition)-(9*i)), null));
+            }
+
+            if(ev%2==1 && !eb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(7*i)), null));
+            }
+
+            if(wv%2==1 && !wb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(7*i)), null));
+            }
+            nb = nbt;
+            sb = sbt;
+            eb = ebt;
+            wb = wbt;
+        }
+        return validMoves;
+    }
+    public static Collection<ChessMove> kingQueenCheckStraights(int size, ChessBoard board, ChessPosition myPosition, 
+        Collection<ChessMove> validMoves, boolean nb, boolean sb, boolean eb, boolean wb, boolean nbt, boolean sbt, boolean ebt, boolean wbt) {
+        for (int i = 1; i < size+1; i++) {
+            int nv = (checkDirection(board, myPosition, i, ChessHelper.Direction.NORTH));
+            int sv = (checkDirection(board, myPosition, i, ChessHelper.Direction.SOUTH));
+            int ev = (checkDirection(board, myPosition, i, ChessHelper.Direction.EAST));
+            int wv = (checkDirection(board, myPosition, i, ChessHelper.Direction.WEST));
+            Thing2Return ret = dothing2(i, board, myPosition, nv, sv, ev, wv, nb, sb, eb, wb, nbt, sbt, ebt, wbt);
+            nbt = ret.nbt();
+            sbt = ret.sbt();
+            ebt = ret.ebt();
+            wbt = ret.wbt();
+            if(nv%2==1 && !nb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+(8*i)), null));
+            }
+
+            if(sv%2==1 && !sb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-(8*i)), null));
+            }
+
+            if(ev%2==1 && !eb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)+i), null));
+            }
+
+            if(wv%2==1 && !wb) {
+                validMoves.add(new ChessMove(myPosition, board.indexToPosition(board.positionToIndex(myPosition)-i), null));
+            }
+            nb = nbt;
+            sb = sbt;
+            eb = ebt;
+            wb = wbt;
+        }
+        return validMoves;
     }
     enum Direction {
         NORTH,
