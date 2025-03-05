@@ -261,7 +261,8 @@ public class ChessBoard implements Cloneable{
             if(getPiece(indexToPosition(i)).getPieceType() == null){
                 continue;
             }
-            for(ChessMove move : getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i))) {
+            Collection<ChessMove> moves = getPiece(indexToPosition(i)).pieceMoves(this, indexToPosition(i));
+            for(ChessMove move : moves) {
                 if (move.getEndPosition().equals(kingPos)){
                     return true;
                 }
