@@ -117,10 +117,12 @@ public class MemoryDAO {
     }
     public void deleteAuth(String authorization) throws DataAccessException {
         //todo: throw exception sometimes?
-        auths.removeIf(e -> e.authToken().equals(authorization));
+        if(!auths.removeIf(e -> e.authToken().equals(authorization))) {
+            throw new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}");
+        }
 
     }
-    public static String generateToken() {
+    static String generateToken() {
         return UUID.randomUUID().toString();
     }
 
