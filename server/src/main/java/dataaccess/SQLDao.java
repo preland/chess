@@ -26,9 +26,9 @@ public class SQLDao {
     private final String[] userStatements = {
             """
             CREATE TABLE IF NOT EXISTS  user (
-              `username` varchar(256),
-              `password` varchar(256),
-              `email` varchar(256),
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -36,8 +36,8 @@ public class SQLDao {
     private final String[] authStatements = {
             """
             CREATE TABLE IF NOT EXISTS  auth (
-              `username` varchar(256),
-              `authToken` varchar(256),
+              `username` varchar(256) NOT NULL,
+              `authToken` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -105,8 +105,21 @@ public class SQLDao {
             throw new DataAccessException("403", "{\"message\": \"Error: already taken\"}");
         }
     }
-    public UserData getUser(String username) {
-        return users.stream().filter(e -> e.username().equals(username)).findFirst().orElse(null);
+    public UserData getUser(String username) throws DataAccessException {
+        //return users.stream().filter(e -> e.username().equals(username)).findFirst().orElse(null);
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("SELECT username, password, email FROM user WHERE username=?");
+            statement.setString(1, username);
+            var result = statement.executeQuery();
+            result.next();
+            String retUsername = result.getString("username");
+            String password = result.getString("password");
+            String email = result.getString("email");
+            return new UserData(retUsername, password, email);
+
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
     }
     public GameData createGame(String authorization, String gameName) throws DataAccessException{
         AuthData verify = getAuth(authorization);
