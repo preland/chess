@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -124,7 +125,10 @@ public class DatabaseManager {
     static String readHashedPasswordFromDatabase(String username) throws DataAccessException {
         throw new DataAccessException("0", "0");
     }
-
+    public void addEntry(String category, String json) throws DataAccessException {
+        var statement = "INSERT INTO " + category + " (name, type, json) VALUES (?, ?, ?)";
+        var id = executeUpdate(statement, /*todo: add things here*/ json);
+    }
     public void clear() throws DataAccessException {
         //games.clear();
         //users.clear();
