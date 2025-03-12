@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -8,6 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SQLDao {
@@ -123,9 +125,18 @@ public class SQLDao {
     }
     public GameData createGame(String authorization, String gameName) throws DataAccessException{
         AuthData verify = getAuth(authorization);
-        GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
-        games.add(game);
-        return game;
+        //GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
+        //games.add(game);
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?,)");
+            statement.setString(1, null);
+            statement.setString(2, null);
+            statement.setString(3, gameName);
+            statement.setString(4, new Gson().toJson(new ChessGame()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
     }
     public List<GameData> listGames(String authorization) throws DataAccessException{
         AuthData verify = getAuth(authorization);
@@ -165,26 +176,59 @@ public class SQLDao {
     }
     public AuthData createAuth(String username, String password) throws DataAccessException{
         //todo: this is probably wrong
-        UserData user = users.stream().filter(e -> e.username().equals(username)).filter(e -> e.password().equals(password)).findFirst().orElseThrow(
-                () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
+        //UserData user = users.stream().filter(e -> e.username().equals(username)).filter(e -> e.password().equals(password)).findFirst().orElseThrow(
+        //        () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
+        UserData user = getUser(username);
+        //userdata password is hashed at this point
+        if(!BCrypt.checkpw(password, user.password())) {
+            throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
+        }
         //at this point user should be proven to exist with given password
+
         String authToken = generateToken();
-        auths.add(new AuthData(authToken, user.username()));
+        //auths.add(new AuthData(authToken, user.username()));
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("INSERT INTO auth (username, authToken) VALUES(?, ?)");
+            statement.setString(1, username);
+            statement.setString(2, authToken);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
         return getAuth(authToken);
     }
     public AuthData getAuth(String authToken) throws DataAccessException{
         System.out.println("n: " + authToken);
-        for(AuthData a : auths) {
-            System.out.println(a.authToken());
-        }
+        //for(AuthData a : auths) {
+        //    System.out.println(a.authToken());
+        //}
         //System.out.println("oop: "+ auth);
-        return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow(
-                () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
+        //return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow(
+        //        () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("SELECT username, authToken FROM auth WHERE authToken=?");
+            statement.setString(1, authToken);
+            var result = statement.executeQuery();
+            result.next();
+            String retAuthToken = result.getString("authToken");
+            String username = result.getString("username");
+            return new AuthData(retAuthToken, username);
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
     }
     public void deleteAuth(String authorization) throws DataAccessException {
         //todo: throw exception sometimes?
-        if(!auths.removeIf(e -> e.authToken().equals(authorization))) {
-            throw new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}");
+        //if(!auths.removeIf(e -> e.authToken().equals(authorization))) {
+        //    throw new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}");
+        //}
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("DELETE FROM auth WHERE authToken=?");
+                statement.setString(1, authorization);
+                statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
 
     }
