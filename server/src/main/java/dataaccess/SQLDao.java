@@ -8,8 +8,8 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class SQLDao {
@@ -123,7 +123,7 @@ public class SQLDao {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
     }
-    public GameData createGame(String authorization, String gameName) throws DataAccessException{
+    public void createGame(String authorization, String gameName) throws DataAccessException{
         AuthData verify = getAuth(authorization);
         //GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
         //games.add(game);
@@ -140,10 +140,25 @@ public class SQLDao {
     }
     public List<GameData> listGames(String authorization) throws DataAccessException{
         AuthData verify = getAuth(authorization);
-        return games;
+        List<GameData> games = new ArrayList<>();
+        try(var conn = DatabaseManager.getConnection()) {
+            var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game");
+            var result = statement.executeQuery();
+            while(result.next()){
+                int gameID = result.getInt("gameID");
+                String whiteUsername = result.getString("whiteUsername");
+                String blackUsername = result.getString("blackUsername");
+                String gameName = result.getString("gameName");
+                ChessGame game = new Gson().fromJson(result.getString("game"), ChessGame.class);
+                games.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
+            }
+            return games;
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
     }
     public void updateGame(String authorization, String username, String playerColor, int gameID) throws DataAccessException{
-        String whiteUser = null;
+        /*String whiteUser = null;
         String blackUser = null;
         System.out.println(playerColor);
         if(playerColor == null){
@@ -171,7 +186,50 @@ public class SQLDao {
         }
         String finalWhiteUser = whiteUser;
         String finalBlackUser = blackUser;
-        games.replaceAll(e -> e.gameID() == gameID ? new GameData(gameID, finalWhiteUser, finalBlackUser, e.gameName(), e.game()) : e);
+        games.replaceAll(e -> e.gameID() == gameID ? new GameData(gameID, finalWhiteUser, finalBlackUser, e.gameName(), e.game()) : e);*/
+        GameData old;
+        try(var conn = DatabaseManager.getConnection()) {
+            var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game WHERE gameID=?");
+            statement.setString(1, String.valueOf(gameID));
+            var result = statement.executeQuery();
+            result.next();
+            int retGameID = result.getInt("gameID");
+            String whiteUsername = result.getString("whiteUsername");
+            String blackUsername = result.getString("blackUsername");
+            String gameName = result.getString("gameName");
+            ChessGame game = new Gson().fromJson(result.getString("game"), ChessGame.class);
+            old = new GameData(retGameID, whiteUsername, blackUsername, gameName, game);
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
+        try(var conn = DatabaseManager.getConnection()) {
+            var statement = conn.prepareStatement("UPDATE game SET whiteUsername=?, blackUsername=? WHERE gameID=?");
+            statement.setString(1, String.valueOf(old.gameID()));
+            var result = statement.executeQuery();
+            result.next();
+            switch(playerColor) {
+                case "WHITE":
+                    if(old.whiteUsername() != null){
+                        throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                    }
+                    statement.setString(1, username);
+                    statement.setString(2, String.valueOf(old.gameID()));
+                    break;
+                case "BLACK":
+                    if(old.blackUsername() != null){
+                        throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
+                    }
+                    statement.setString(1, String.valueOf(old.gameID()));
+                    statement.setString(2, username);
+                    break;
+                default:
+                    throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+            }
+
+
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
 
     }
     public AuthData createAuth(String username, String password) throws DataAccessException{
