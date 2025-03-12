@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class DatabaseManager {
     private static final String DATABASE_NAME;
     private static final String USER;
@@ -91,6 +94,30 @@ public class DatabaseManager {
 
         return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param instanceof ChessGame p) ps.setString(i + 1, p.toString());
+                    //todo: add more like above
+                    else if (param == null) ps.setNull(i + 1, NULL);
+                }
+                ps.executeUpdate();
+
+                var rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
     static void writeHashedPasswordToDatabase(String username, String hashedPassword) throws DataAccessException {
         throw new DataAccessException("0", "0");
     }
@@ -99,9 +126,15 @@ public class DatabaseManager {
     }
 
     public void clear() throws DataAccessException {
-        games.clear();
-        users.clear();
-        auths.clear();
+        //games.clear();
+        //users.clear();
+        //auths.clear();
+        String statement = "TRUNCATE game";
+        executeUpdate(statement);
+        statement = "TRUNCATE user";
+        executeUpdate(statement);
+        statement = "TRUNCATE auth";
+        executeUpdate(statement);
     }
     public void createUser(String username, String password, String email) throws DataAccessException{
         if(username == null || password == null || email == null){
