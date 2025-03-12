@@ -1,5 +1,7 @@
 package dataaccess;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.*;
 import java.util.Properties;
 
@@ -44,7 +46,7 @@ public class DatabaseManager {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
     }
 
@@ -66,7 +68,27 @@ public class DatabaseManager {
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
+    }
+    static void storeUserPassword(String username, String clearTextPassword) throws DataAccessException{
+        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+
+        // write the hashed password in database along with the user's other information
+        try{writeHashedPasswordToDatabase(username, hashedPassword);} catch (DataAccessException e) {
+            throw e;
+        }
+    }
+    boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
+        // read the previously hashed password from the database
+        var hashedPassword = readHashedPasswordFromDatabase(username);
+
+        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+    }
+    static void writeHashedPasswordToDatabase(String username, String hashedPassword) throws DataAccessException {
+        throw new DataAccessException("0", "0");
+    }
+    static String readHashedPasswordFromDatabase(String username) throws DataAccessException {
+        throw new DataAccessException("0", "0");
     }
 }
