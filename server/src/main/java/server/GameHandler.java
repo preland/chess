@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDAO;
+import dataaccess.SQLDao;
 import service.*;
 import service.requestresult.*;
 
@@ -32,9 +33,9 @@ public class GameHandler {
         return serializer.toJson(result);
     }
     public static String clearDatabaseHandler() throws ServiceException {
-        MemoryDAO memdb = MemoryDAO.getInstance();
+        //MemoryDAO memdb = MemoryDAO.getInstance();
         try {
-            memdb.clear();
+            new SQLDao().clear();
         } catch (DataAccessException e) {
             throw new ServiceException(e.code, e.body);
         }

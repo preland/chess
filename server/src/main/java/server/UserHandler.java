@@ -7,6 +7,7 @@ import service.requestresult.*;
 public class UserHandler {
     public static String registerHandler(String request) throws ServiceException {
         var serializer = new Gson();
+        System.out.println(request);
         RegisterRequest reg = serializer.fromJson(request, RegisterRequest.class);
         RegisterResult result = UserService.register(reg);
        //System.out.println(result);

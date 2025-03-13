@@ -3,6 +3,8 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import service.ServiceException;
 import spark.*;
 
@@ -12,6 +14,9 @@ import static spark.Spark.options;
 public class Server {
 
     public int run(int desiredPort) {
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
         Spark.post("/user", (request, response) -> {

@@ -94,7 +94,7 @@ public class SQLDao {
         if(getUser(username) == null){
             //users.add(new UserData(username, password, email));
             try(var conn = DatabaseManager.getConnection()){
-                var statement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?,)");
+                var statement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)");
                 statement.setString(1, username);
                 statement.setString(2, BCrypt.hashpw(password, BCrypt.gensalt()));
                 statement.setString(3, email);
@@ -113,7 +113,9 @@ public class SQLDao {
             var statement = conn.prepareStatement("SELECT username, password, email FROM user WHERE username=?");
             statement.setString(1, username);
             var result = statement.executeQuery();
-            result.next();
+            if(!result.next()) {
+                return null;
+            }
             String retUsername = result.getString("username");
             String password = result.getString("password");
             String email = result.getString("email");
@@ -123,17 +125,24 @@ public class SQLDao {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
     }
-    public void createGame(String authorization, String gameName) throws DataAccessException{
+    public GameData createGame(String authorization, String gameName) throws DataAccessException{
         AuthData verify = getAuth(authorization);
         //GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
         //games.add(game);
         try(var conn = DatabaseManager.getConnection()){
-            var statement = conn.prepareStatement("INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?,)");
+            var statement = conn.prepareStatement("INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?)");
             statement.setString(1, null);
             statement.setString(2, null);
             statement.setString(3, gameName);
             statement.setString(4, new Gson().toJson(new ChessGame()));
             statement.executeUpdate();
+
+            statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game WHERE gameName=?");
+            statement.setString(1, gameName);
+            var result = statement.executeQuery();
+            result.next();
+            return new GameData(Integer.parseInt(result.getString("gameID")), result.getString("whiteUsername"), result.getString("blackUsername"),
+                    result.getString("gameName"), new Gson().fromJson(result.getString("game"), ChessGame.class));
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
@@ -192,7 +201,9 @@ public class SQLDao {
             var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game WHERE gameID=?");
             statement.setString(1, String.valueOf(gameID));
             var result = statement.executeQuery();
-            result.next();
+            if(!result.next()) {
+                throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+            }
             int retGameID = result.getInt("gameID");
             String whiteUsername = result.getString("whiteUsername");
             String blackUsername = result.getString("blackUsername");
@@ -204,9 +215,7 @@ public class SQLDao {
         }
         try(var conn = DatabaseManager.getConnection()) {
             var statement = conn.prepareStatement("UPDATE game SET whiteUsername=?, blackUsername=? WHERE gameID=?");
-            statement.setString(1, String.valueOf(old.gameID()));
-            var result = statement.executeQuery();
-            result.next();
+            statement.setString(3, String.valueOf(old.gameID()));
             switch(playerColor) {
                 case "WHITE":
                     if(old.whiteUsername() != null){
@@ -225,7 +234,7 @@ public class SQLDao {
                 default:
                     throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
             }
-
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
@@ -238,11 +247,24 @@ public class SQLDao {
         //        () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
         UserData user = getUser(username);
         //userdata password is hashed at this point
+        if(user == null) {
+            throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+        }
         if(!BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
         }
         //at this point user should be proven to exist with given password
-
+        try(var conn = DatabaseManager.getConnection()){
+            var statement = conn.prepareStatement("SELECT username FROM auth WHERE username=?");
+            statement.setString(1, username);
+            //statement.setString(2, authToken);
+            var result = statement.executeQuery();
+            if(result.next()){
+                throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
         String authToken = generateToken();
         //auths.add(new AuthData(authToken, user.username()));
         try(var conn = DatabaseManager.getConnection()){
