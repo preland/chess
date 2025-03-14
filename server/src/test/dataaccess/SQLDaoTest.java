@@ -1,11 +1,15 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
+import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,35 +47,82 @@ class SQLDaoTest {
 
     @Test
     void createUserPositive() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        assertDoesNotThrow( () -> sqldb.createUser("test", "pwd", "a"));
     }
     @Test
     void createUserNegative() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        assertThrows(DataAccessException.class, () -> sqldb.createUser("test", "pwd", null));
     }
     @Test
     void getUserPositive() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "pwd", "a");
+
+        UserData user = sqldb.getUser("test");
+        assertNotNull(user);
     }
 
     @Test
     void getUserNegative() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "pwd", "a");
+
+        UserData user = sqldb.getUser("asdf");
+        assertNull(user);
     }
 
     @Test
     void createGamePositive() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        GameData game = sqldb.createGame(auth.authToken(), "game1");
+        assertEquals(null, game.whiteUsername());
+        assertEquals(null, game.blackUsername());
+        assertEquals(1, game.gameID());
+        assertEquals("game1", game.gameName());
     }
     @Test
     void createGameNegative() throws DataAccessException {
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        assertThrows(DataAccessException.class, () -> sqldb.createGame("auth.authToken()", "game1"));
     }
     @Test
     void listGamesPositive() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        GameData game = sqldb.createGame(auth.authToken(), "game1");
+        List<GameData> games = sqldb.listGames(auth.authToken());
+        assertEquals(game, games.get(0));
     }
     @Test
     void listGamesNegative() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        GameData game = sqldb.createGame(auth.authToken(), "game1");
+        assertThrows(DataAccessException.class, () -> sqldb.listGames("asdf"));
     }
     @Test
     void updateGamePositive() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        GameData game = sqldb.createGame(auth.authToken(), "game1");
+        assertDoesNotThrow( () -> sqldb.updateGame(auth.authToken(), auth.username(), "BLACK", 1));
     }
     @Test
     void updateGameNegative() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        GameData game = sqldb.createGame(auth.authToken(), "game1");
+        assertThrows(DataAccessException.class,  () -> sqldb.updateGame(auth.authToken(), auth.username(), "GRAY", 1));
     }
     @Test
     void createAuthPositive() throws DataAccessException{
