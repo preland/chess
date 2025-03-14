@@ -142,7 +142,8 @@ public class SQLDao {
                 String blackUsername = result.getString("blackUsername");
                 String gameName = result.getString("gameName");
                 ChessGame game = new Gson().fromJson(result.getString("game"), ChessGame.class);
-                games.add(new GameData(gameID, Objects.equals(whiteUsername, "null") ? null : whiteUsername, Objects.equals(blackUsername, "null") ? null : blackUsername, gameName, game));
+                games.add(new GameData(gameID, Objects.equals(whiteUsername, "null") ? null : whiteUsername,
+                        Objects.equals(blackUsername, "null") ? null : blackUsername, gameName, game));
             }
             return games;
         } catch (SQLException e) {
