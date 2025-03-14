@@ -10,6 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SQLDao {
@@ -40,7 +41,7 @@ public class SQLDao {
             CREATE TABLE IF NOT EXISTS  auth (
               `username` varchar(256) NOT NULL,
               `authToken` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -141,7 +142,7 @@ public class SQLDao {
                 String blackUsername = result.getString("blackUsername");
                 String gameName = result.getString("gameName");
                 ChessGame game = new Gson().fromJson(result.getString("game"), ChessGame.class);
-                games.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
+                games.add(new GameData(gameID, Objects.equals(whiteUsername, "null") ? null : whiteUsername, Objects.equals(blackUsername, "null") ? null : blackUsername, gameName, game));
             }
             return games;
         } catch (SQLException e) {
@@ -169,19 +170,22 @@ public class SQLDao {
         try(var conn = DatabaseManager.getConnection()) {
             var statement = conn.prepareStatement("UPDATE game SET whiteUsername=?, blackUsername=? WHERE gameID=?");
             statement.setString(3, String.valueOf(old.gameID()));
+            if(playerColor==null) {
+                throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+            }
             switch(playerColor) {
                 case "WHITE":
-                    if(old.whiteUsername() != null){
+                    if(old.whiteUsername() != null && !old.whiteUsername().equals("null")){
                         throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
                     }
                     statement.setString(1, username);
-                    statement.setString(2, String.valueOf(old.gameID()));
+                    statement.setString(2, String.valueOf(old.blackUsername()));
                     break;
                 case "BLACK":
-                    if(old.blackUsername() != null){
+                    if(old.blackUsername() != null && !old.blackUsername().equals("null")){
                         throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
                     }
-                    statement.setString(1, String.valueOf(old.gameID()));
+                    statement.setString(1, String.valueOf(old.whiteUsername()));
                     statement.setString(2, username);
                     break;
                 default:
@@ -194,12 +198,12 @@ public class SQLDao {
         }
 
     }
-    public AuthData createAuth(String username, String password) throws DataAccessException{
+    public AuthData createAuth(String username, String password, Boolean recurse) throws DataAccessException{
         //todo: this is probably wrong
         UserData user = getUser(username);
         //userdata password is hashed at this point
         if(user == null) {
-            throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+            throw new DataAccessException("401", "{\"message\": \"Error: bad request\"}");
         }
         if(!BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
@@ -210,9 +214,12 @@ public class SQLDao {
             statement.setString(1, username);
             //statement.setString(2, authToken);
             var result = statement.executeQuery();
-            if(result.next()){
+            if(result.next() && recurse){
+                recurse = false;
                 //apparently this is in spec for some reason .-.
-                return new AuthData(result.getString("authToken"), result.getString("username"));
+                //return new AuthData(result.getString("authToken"), result.getString("username"));
+                //deleteAuth(result.getString("authToken"));
+                return createAuth(username, password, recurse);
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
@@ -234,7 +241,9 @@ public class SQLDao {
             var statement = conn.prepareStatement("SELECT username, authToken FROM auth WHERE authToken=?");
             statement.setString(1, authToken);
             var result = statement.executeQuery();
-            result.next();
+            if(!result.next()) {
+                throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
+            }
             String retAuthToken = result.getString("authToken");
             String username = result.getString("username");
             return new AuthData(retAuthToken, username);

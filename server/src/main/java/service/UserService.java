@@ -16,7 +16,7 @@ public class UserService {
         try {
             SQLDao sqldb = new SQLDao();
             sqldb.createUser(username, password, email);
-            return new RegisterResult(sqldb.getUser(username).username(), sqldb.createAuth(username, password).authToken());
+            return new RegisterResult(sqldb.getUser(username).username(), sqldb.createAuth(username, password, true).authToken());
         } catch (DataAccessException e) {
             throw new ServiceException(e.code, e.body);
         }
@@ -31,7 +31,7 @@ public class UserService {
         String password = loginRequest.password();
         try {
             SQLDao sqldb = new SQLDao();
-            AuthData auth = sqldb.createAuth(username, password);
+            AuthData auth = sqldb.createAuth(username, password, true);
             return new LoginResult(auth.username(), auth.authToken());
         } catch (DataAccessException e) {
             throw new ServiceException(e.code, e.body);
