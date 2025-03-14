@@ -49,19 +49,13 @@ public class SQLDao {
             DatabaseManager.createDatabase();
             try (var conn = DatabaseManager.getConnection()) {
                 for (var statement : gameStatements) {
-                    try (var preparedStatement = conn.prepareStatement(statement)) {
-                        preparedStatement.executeUpdate();
-                    }
+                    conn.prepareStatement(statement).executeUpdate();
                 }
                 for (var statement : userStatements) {
-                    try (var preparedStatement = conn.prepareStatement(statement)) {
-                        preparedStatement.executeUpdate();
-                    }
+                    conn.prepareStatement(statement).executeUpdate();
                 }
                 for (var statement : authStatements) {
-                    try (var preparedStatement = conn.prepareStatement(statement)) {
-                        preparedStatement.executeUpdate();
-                    }
+                    conn.prepareStatement(statement).executeUpdate();
                 }
             }
         }
@@ -76,9 +70,6 @@ public class SQLDao {
         throw new DataAccessException("0", "0");
     }
     public void clear() throws DataAccessException {
-        //games.clear();
-        //users.clear();
-        //auths.clear();
         try(var conn = DatabaseManager.getConnection()){
             conn.prepareStatement("TRUNCATE game").executeUpdate();
             conn.prepareStatement("TRUNCATE user").executeUpdate();
@@ -92,7 +83,6 @@ public class SQLDao {
             throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
         }
         if(getUser(username) == null){
-            //users.add(new UserData(username, password, email));
             try(var conn = DatabaseManager.getConnection()){
                 var statement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)");
                 statement.setString(1, username);
@@ -127,8 +117,6 @@ public class SQLDao {
     }
     public GameData createGame(String authorization, String gameName) throws DataAccessException{
         AuthData verify = getAuth(authorization);
-        //GameData game = new GameData(games.size()+1, null, null, gameName, new ChessGame());
-        //games.add(game);
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?)");
             statement.setString(1, null);
@@ -167,35 +155,6 @@ public class SQLDao {
         }
     }
     public void updateGame(String authorization, String username, String playerColor, int gameID) throws DataAccessException{
-        /*String whiteUser = null;
-        String blackUser = null;
-        System.out.println(playerColor);
-        if(playerColor == null){
-            throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
-        }
-        GameData old = games.stream().filter(e -> e.gameID()==gameID).findFirst().orElseThrow(
-                () -> new DataAccessException("400", "{\"message\": \"Error: bad request\"}"));
-        switch(playerColor) {
-            case "WHITE":
-                if(old.whiteUsername() != null){
-                    throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
-                }
-                whiteUser = username;
-                blackUser = old.blackUsername();
-                break;
-            case "BLACK":
-                if(old.blackUsername() != null){
-                    throw new DataAccessException("403", "{\"message\": \"Error: forbidden\"}");
-                }
-                blackUser = username;
-                whiteUser = old.whiteUsername();
-                break;
-            default:
-                throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
-        }
-        String finalWhiteUser = whiteUser;
-        String finalBlackUser = blackUser;
-        games.replaceAll(e -> e.gameID() == gameID ? new GameData(gameID, finalWhiteUser, finalBlackUser, e.gameName(), e.game()) : e);*/
         GameData old;
         try(var conn = DatabaseManager.getConnection()) {
             var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game WHERE gameID=?");
@@ -243,8 +202,6 @@ public class SQLDao {
     }
     public AuthData createAuth(String username, String password) throws DataAccessException{
         //todo: this is probably wrong
-        //UserData user = users.stream().filter(e -> e.username().equals(username)).filter(e -> e.password().equals(password)).findFirst().orElseThrow(
-        //        () -> new DataAccessException("401", "{\"message\": \"Error: forbidden\"}"));
         UserData user = getUser(username);
         //userdata password is hashed at this point
         if(user == null) {
@@ -260,17 +217,13 @@ public class SQLDao {
             //statement.setString(2, authToken);
             var result = statement.executeQuery();
             if(result.next()){
-                //throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
-                //apparently that is out of spec for some reason .-.
-                //deleteAuth(result.getString("authToken"));
-                //createAuth(username, password);
+                //apparently this is in spec for some reason .-.
                 return new AuthData(result.getString("authToken"), result.getString("username"));
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
         String authToken = generateToken();
-        //auths.add(new AuthData(authToken, user.username()));
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("INSERT INTO auth (username, authToken) VALUES(?, ?)");
             statement.setString(1, username);
@@ -283,12 +236,6 @@ public class SQLDao {
     }
     public AuthData getAuth(String authToken) throws DataAccessException{
         System.out.println("n: " + authToken);
-        //for(AuthData a : auths) {
-        //    System.out.println(a.authToken());
-        //}
-        //System.out.println("oop: "+ auth);
-        //return auths.stream().filter(e -> e.authToken().equals(authToken)).findFirst().orElseThrow(
-        //        () -> new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}"));
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("SELECT username, authToken FROM auth WHERE authToken=?");
             statement.setString(1, authToken);
@@ -303,9 +250,6 @@ public class SQLDao {
     }
     public void deleteAuth(String authorization) throws DataAccessException {
         //todo: throw exception sometimes?
-        //if(!auths.removeIf(e -> e.authToken().equals(authorization))) {
-        //    throw new DataAccessException("401", "{\"message\": \"Error: unauthorized\"}");
-        //}
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("DELETE FROM auth WHERE authToken=?");
                 statement.setString(1, authorization);
@@ -321,19 +265,5 @@ public class SQLDao {
     }
     static String generateToken() {
         return UUID.randomUUID().toString();
-    }
-    static void storeUserPassword(String username, String clearTextPassword) throws DataAccessException{
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-
-        // write the hashed password in database along with the user's other information
-        try{writeHashedPasswordToDatabase(username, hashedPassword);} catch (DataAccessException e) {
-            throw e;
-        }
-    }
-    boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
-        // read the previously hashed password from the database
-        var hashedPassword = readHashedPasswordFromDatabase(username);
-
-        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
 }
