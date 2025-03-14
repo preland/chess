@@ -62,33 +62,58 @@ class SQLDaoTest {
     void createGameNegative() throws DataAccessException {
     }
     @Test
-    void listGamesPositive() {
+    void listGamesPositive() throws DataAccessException{
     }
     @Test
-    void listGamesNegative() {
+    void listGamesNegative() throws DataAccessException{
     }
     @Test
-    void updateGamePositive() {
+    void updateGamePositive() throws DataAccessException{
     }
     @Test
-    void updateGameNegative() {
+    void updateGameNegative() throws DataAccessException{
     }
     @Test
-    void createAuthPositive() {
+    void createAuthPositive() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        assertEquals(auth, sqldb.getAuth(auth.authToken()));
     }
     @Test
-    void createAuthNegative() {
+    void createAuthNegative() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        assertThrows(DataAccessException.class, () -> sqldb.createAuth("test", "asdf"));
     }
     @Test
-    void getAuthPositive() {
+    void getAuthPositive() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        AuthData storedAuth = sqldb.getAuth(auth.authToken());
+        assertEquals(auth, storedAuth);
     }
     @Test
-    void getAuthNegative() {
+    void getAuthNegative() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        assertThrows(DataAccessException.class, () -> sqldb.getAuth("false"));
     }
     @Test
-    void deleteAuthPositive() {
+    void deleteAuthPositive() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        sqldb.deleteAuth(auth.authToken());
+        assertThrows(DataAccessException.class, () -> sqldb.getAuth(auth.authToken()));
     }
     @Test
-    void deleteAuthNegative() {
+    void deleteAuthNegative() throws DataAccessException{
+        SQLDao sqldb = new SQLDao();
+        sqldb.createUser("test", "password", "email");
+        AuthData auth = sqldb.createAuth("test", "password");
+        assertThrows(DataAccessException.class, () -> sqldb.deleteAuth("auth.authToken()"));
     }
 }

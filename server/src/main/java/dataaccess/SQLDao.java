@@ -255,12 +255,16 @@ public class SQLDao {
         }
         //at this point user should be proven to exist with given password
         try(var conn = DatabaseManager.getConnection()){
-            var statement = conn.prepareStatement("SELECT username FROM auth WHERE username=?");
+            var statement = conn.prepareStatement("SELECT username, authToken FROM auth WHERE username=?");
             statement.setString(1, username);
             //statement.setString(2, authToken);
             var result = statement.executeQuery();
             if(result.next()){
-                throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
+                //throw new DataAccessException("401", "{\"message\": \"Error: forbidden\"}");
+                //apparently that is out of spec for some reason .-.
+                //deleteAuth(result.getString("authToken"));
+                //createAuth(username, password);
+                return new AuthData(result.getString("authToken"), result.getString("username"));
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
@@ -305,7 +309,10 @@ public class SQLDao {
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("DELETE FROM auth WHERE authToken=?");
                 statement.setString(1, authorization);
-                statement.executeUpdate();
+                if(statement.executeUpdate()==0) {
+                    throw new DataAccessException("400", "{\"message\": \"Error: bad request\"}");
+                }
+
         }
         catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
