@@ -63,12 +63,6 @@ public class SQLDao {
             throw new DataAccessException("500", e.getMessage());
         }
     }
-    static void writeHashedPasswordToDatabase(String username, String hashedPassword) throws DataAccessException {
-        throw new DataAccessException("0", "0");
-    }
-    static String readHashedPasswordFromDatabase(String username) throws DataAccessException {
-        throw new DataAccessException("0", "0");
-    }
     public void clear() throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
             conn.prepareStatement("TRUNCATE game").executeUpdate();
