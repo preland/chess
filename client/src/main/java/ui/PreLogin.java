@@ -6,8 +6,11 @@ import utils.ServerFacade;
 
 public class PreLogin {
     ServerFacade server;
+    boolean loggedIn = false;
+    PostLogin ui;
     public PreLogin(ServerFacade server) {
         this.server = server;
+        this.ui = new PostLogin();
     }
     public void run() {
         boolean quit = false;
@@ -33,28 +36,41 @@ public class PreLogin {
                     handleHelp();
                     break;
             }
+            if(loggedIn) {
+                quit = ui.run();
+                loggedIn = false;
+            }
         }
     }
-    static void handleLogin(String[] input){
+    void handleLogin(String[] input){
         if(input.length != 3) {
             handleHelp();
             return;
         }
         String username = input[1];
         String password = input[2];
-        System.out.println("login text");
+        if(this.server.login(username, password)) {
+            this.loggedIn = true;
+        } else {
+            System.out.println("Failed to login!");
+        }
+        //System.out.println("login text");
     }
-    static void handleRegister(String[] input){
+    void handleRegister(String[] input){
         if(input.length != 4) {
             handleHelp();
             return;
         }
+
         String username = input[1];
         String password = input[2];
         String email = input[3];
-        System.out.println("register text");
+        if(!this.server.register(username, password, email)) {
+            System.out.println("Failed to register!");
+        }
+        //System.out.println("register text");
     }
-    static void handleHelp(){
+    void handleHelp(){
         System.out.println("register <USERNAME> <PASSWORD> <EMAIL> - create account");
         System.out.println("login <USERNAME> <PASSWORD> - login to account");
         System.out.println("quit - exits application");

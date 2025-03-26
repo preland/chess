@@ -5,16 +5,23 @@ import utils.ServerFacade;
 import java.util.Scanner;
 
 public class PostLogin {
+    ServerFacade server;
     public PostLogin(ServerFacade server) {
+        this.server = new ServerFacade();
+    }
+
+    public PostLogin() {
 
     }
-    public void run() {
+
+    public boolean run() {
         boolean quit = false;
+        boolean logout = false;
         Scanner scan = new Scanner(System.in);
-        while(!quit) {
+        while(!quit && !logout) {
             System.out.print(">>> ");
             String[] input = scan.nextLine().split(" ");
-            switch (input[1]) {
+            switch (input[0]) {
                 case "create":
                     handleCreate(input);
                     break;
@@ -28,7 +35,11 @@ public class PostLogin {
                     handleObserve(input);
                     break;
                 case "logout":
-                    handleLogout();
+                    if(handleLogout()) {
+                        logout = true;
+                    } else {
+                        System.out.println("Failed to logout!");
+                    }
                     break;
                 case "help":
                     handleHelp();
@@ -42,12 +53,14 @@ public class PostLogin {
                     break;
             }
         }
+        return quit;
     }
 
     private void handleCreate(String[] input) {
     }
 
-    private void handleLogout() {
+    private boolean handleLogout() {
+        return true;
     }
 
     private void handleObserve(String[] input) {
