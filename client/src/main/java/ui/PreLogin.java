@@ -65,9 +65,7 @@ public class PreLogin {
         String username = input[1];
         String password = input[2];
         String email = input[3];
-        if(!this.server.register(username, password, email)) {
-            System.out.println("Failed to register!");
-        }
+        System.out.println(this.server.register(username, password, email));
         //System.out.println("register text");
     }
     void handleHelp(){

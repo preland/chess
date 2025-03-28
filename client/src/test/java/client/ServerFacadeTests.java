@@ -2,12 +2,13 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
+import utils.ServerFacade;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
-
+    private static ServerFacade serverFacade;
     @BeforeAll
     public static void init() {
         server = new Server();
@@ -22,8 +23,12 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    public void registerPositive() {
+        Assertions.assertEquals("Successfully registered!", serverFacade.register("test", "test", "test"));
+    }
+    @Test
+    public void registerNegative() {
+        Assertions.assertNotEquals("Successfully registered!", serverFacade.register(null, "test", "test"));
     }
 
 }
