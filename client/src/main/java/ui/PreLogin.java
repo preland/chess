@@ -50,6 +50,7 @@ public class PreLogin {
         String username = input[1];
         String password = input[2];
         if(this.server.login(username, password)) {
+            System.out.println("Successfully logged in!");
             this.loggedIn = true;
         } else {
             System.out.println("Failed to login!");
