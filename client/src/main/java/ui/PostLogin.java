@@ -2,20 +2,16 @@ package ui;
 
 import utils.ServerFacade;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class PostLogin {
     ServerFacade server;
     String auth = "";
-    public PostLogin(ServerFacade server) {
-        this.server = new ServerFacade();
-    }
-
     public PostLogin() {
-
     }
-
-    public boolean run(String auth) {
+    public boolean run(ServerFacade server, String auth) {
+        this.server = server;
         this.auth = auth;
         boolean quit = false;
         boolean logout = false;
@@ -64,7 +60,12 @@ public class PostLogin {
             return;
         }
         String name = input[1];
-        System.out.println(this.server.createGame(name, auth));
+        String id = this.server.createGame(name, auth);
+        if(!Objects.equals(id, "")) {
+            System.out.println("Successfully created game with id: " + id + "!");
+        } else {
+            System.out.println("Failed to create game!");
+        }
     }
 
     private boolean handleLogout() {

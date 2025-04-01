@@ -39,7 +39,7 @@ public class PreLogin {
                     break;
             }
             if(loggedIn) {
-                quit = ui.run(auth);
+                quit = ui.run(server, auth);
                 loggedIn = false;
             }
         }
