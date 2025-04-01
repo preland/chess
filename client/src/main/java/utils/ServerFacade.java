@@ -111,10 +111,6 @@ public class ServerFacade {
         return ret;
     }
 
-    /*public String observe(int id, String auth) {
-        return "";
-    }*/
-
     public String joinGame(int id, String teamColor, String auth) {
         String ret;
 

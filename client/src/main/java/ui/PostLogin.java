@@ -84,78 +84,78 @@ public class PostLogin {
         int id = Integer.parseInt(input[1]);
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
-        String init_board = "RNBQKBNRPPPPPPPP................................pppppppprnbkqbnr";
+        String initBoard = "RNBQKBNRPPPPPPPP................................pppppppprnbkqbnr";
         boolean isWhite = false;
-        StringBuilder out_board = new StringBuilder();
+        StringBuilder outBoard = new StringBuilder();
         for (int i = 0; i < 64;i++) {
             if(isWhite) {
-                out_board.append(SET_BG_COLOR_DARK_GREEN);
+                outBoard.append(SET_BG_COLOR_DARK_GREEN);
                 isWhite = false;
             } else {
-                out_board.append(SET_BG_COLOR_WHITE);
+                outBoard.append(SET_BG_COLOR_WHITE);
                 isWhite = true;
             }
-            switch(init_board.charAt(i)) {
+            switch(initBoard.charAt(i)) {
                 case 'R':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_ROOK);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_ROOK);
                     break;
                 case 'N':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_KNIGHT);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_KNIGHT);
                     break;
                 case 'B':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_BISHOP);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_BISHOP);
                     break;
                 case 'Q':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_QUEEN);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_QUEEN);
                     break;
                 case 'K':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_KING);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_KING);
                     break;
                 case 'P':
-                    out_board.append(SET_TEXT_COLOR_BLACK);
-                    out_board.append(BLACK_PAWN);
+                    outBoard.append(SET_TEXT_COLOR_BLACK);
+                    outBoard.append(BLACK_PAWN);
                     break;
                 case 'r':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_ROOK);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_ROOK);
                     break;
                 case 'n':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_KNIGHT);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_KNIGHT);
                     break;
                 case 'b':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_BISHOP);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_BISHOP);
                     break;
                 case 'q':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_QUEEN);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_QUEEN);
                     break;
                 case 'k':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_KING);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_KING);
                     break;
                 case 'p':
-                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
-                    out_board.append(BLACK_PAWN);
+                    outBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    outBoard.append(BLACK_PAWN);
                     break;
                 default:
-                    out_board.append("   ");
+                    outBoard.append("   ");
                     break;
             }
-            out_board.append(RESET_BG_COLOR);
-            out_board.append(RESET_TEXT_COLOR);
+            outBoard.append(RESET_BG_COLOR);
+            outBoard.append(RESET_TEXT_COLOR);
             if(i%8==7) {
-                out_board.append("\n");
+                outBoard.append("\n");
                 isWhite = !isWhite;
             }
         }
-        System.out.println(out_board);
+        System.out.println(outBoard);
     }
 
     private void handleJoin(String[] input) {
