@@ -17,7 +17,12 @@ public class ServerFacadeTests {
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
         serverFacade = new ServerFacade();
-        TestServerFacade setupFacade = new TestServerFacade("localhost", Integer.toString(port));
+
+    }
+
+    @BeforeEach
+    void clearServer(){
+        TestServerFacade setupFacade = new TestServerFacade("localhost", Integer.toString(8080));
         setupFacade.clear();
     }
 
@@ -47,26 +52,56 @@ public class ServerFacadeTests {
     }
     @Test
     public void createGamePositive() {
-
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        Assertions.assertNotEquals("", serverFacade.createGame("name", auth));
     }
     @Test
     public void createGameNegative() {
-
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        Assertions.assertEquals("", serverFacade.createGame("name", "fake"));
     }
     @Test
     public void logoutPositive() {
-
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        Assertions.assertEquals("Successfully logged out!", serverFacade.logout(auth));
     }
     @Test
     public void logoutNegative() {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        Assertions.assertEquals("Failed to log out!", serverFacade.logout("fake"));
 
     }
     @Test
     public void joinGamePositive() {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertEquals("Successfully joined game!", serverFacade.joinGame(1, "WHITE", auth));
 
     }
     @Test
     public void joinGameNegative() {
-
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertEquals("Failed to join game!", serverFacade.joinGame(1, "WHITE", "fake"));
+    }
+    @Test
+    public void listGamesPositive() {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertEquals("Successfully listed games!", serverFacade.listGames(auth));
+    }
+    @Test
+    public void listGamesNegative() {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertEquals("Failed to list games!", serverFacade.listGames("fake"));
     }
 }

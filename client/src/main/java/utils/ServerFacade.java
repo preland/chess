@@ -50,7 +50,7 @@ public class ServerFacade {
             request("POST", "/user", body, null);
             ret = "Successfully registered!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "Failed to register! ";// + e.toString(); //todo: remove debug info here
+            ret = "Failed to register! ";
             return ret;
         }
         return ret;
@@ -99,7 +99,7 @@ public class ServerFacade {
             String id = String.valueOf(new Gson().<CreateGameResult>fromJson(req, CreateGameResult.class).gameID());
             ret = id;
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "";// + e.toString(); //todo: remove debug info here
+            ret = "";
             return ret;
         }
         return ret;
@@ -112,7 +112,7 @@ public class ServerFacade {
             request("DELETE", "/session", null, auth);
             ret = "Successfully logged out!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "Failed to log out!";// + e.toString(); //todo: remove debug info here
+            ret = "Failed to log out!";
             return ret;
         }
         return ret;
