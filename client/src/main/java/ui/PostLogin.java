@@ -5,6 +5,8 @@ import utils.ServerFacade;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static ui.EscapeSequences.*;
+
 public class PostLogin {
     ServerFacade server;
     String auth = "";
@@ -80,7 +82,80 @@ public class PostLogin {
             return;
         }
         int id = Integer.parseInt(input[1]);
-        System.out.println(this.server.observe(id, auth));
+        //System.out.println(this.server.observe(id, auth));
+        //for now just print out template
+        String init_board = "RNBQKBNRPPPPPPPP................................pppppppprnbkqbnr";
+        boolean isWhite = false;
+        StringBuilder out_board = new StringBuilder();
+        for (int i = 0; i < 64;i++) {
+            if(isWhite) {
+                out_board.append(SET_BG_COLOR_DARK_GREEN);
+                isWhite = false;
+            } else {
+                out_board.append(SET_BG_COLOR_WHITE);
+                isWhite = true;
+            }
+            switch(init_board.charAt(i)) {
+                case 'R':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_ROOK);
+                    break;
+                case 'N':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_KNIGHT);
+                    break;
+                case 'B':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_BISHOP);
+                    break;
+                case 'Q':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_QUEEN);
+                    break;
+                case 'K':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_KING);
+                    break;
+                case 'P':
+                    out_board.append(SET_TEXT_COLOR_BLACK);
+                    out_board.append(BLACK_PAWN);
+                    break;
+                case 'r':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_ROOK);
+                    break;
+                case 'n':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_KNIGHT);
+                    break;
+                case 'b':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_BISHOP);
+                    break;
+                case 'q':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_QUEEN);
+                    break;
+                case 'k':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_KING);
+                    break;
+                case 'p':
+                    out_board.append(SET_TEXT_COLOR_LIGHT_GREY);
+                    out_board.append(BLACK_PAWN);
+                    break;
+                default:
+                    out_board.append("   ");
+                    break;
+            }
+            out_board.append(RESET_BG_COLOR);
+            out_board.append(RESET_TEXT_COLOR);
+            if(i%8==7) {
+                out_board.append("\n");
+                isWhite = !isWhite;
+            }
+        }
+        System.out.println(out_board);
     }
 
     private void handleJoin(String[] input) {
