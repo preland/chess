@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class ServerFacade {
     String url;
-    public ServerFacade() {
-        this.url = "http://localhost:8080";
+    public ServerFacade(int port) {
+        this.url = "http://localhost:" + port;
     }
 
     public String login(String username, String password) {

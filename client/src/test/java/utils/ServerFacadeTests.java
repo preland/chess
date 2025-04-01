@@ -1,28 +1,27 @@
-package client;
+package utils;
 
 import org.junit.jupiter.api.*;
 import passoff.server.TestServerFacade;
 import server.Server;
-import utils.ServerFacade;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
     private static ServerFacade serverFacade;
-
+    private static int port;
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        serverFacade = new ServerFacade();
+        serverFacade = new ServerFacade(port);
 
     }
 
     @BeforeEach
     void clearServer(){
-        TestServerFacade setupFacade = new TestServerFacade("localhost", Integer.toString(8080));
+        TestServerFacade setupFacade = new TestServerFacade("localhost", Integer.toString(port));
         setupFacade.clear();
     }
 
