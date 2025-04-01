@@ -1,5 +1,5 @@
 import ui.PreLogin;
-import utils.ServerFacade;
+import client.ServerFacade;
 
 public class Main {
     public static void main(String[] args) {

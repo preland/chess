@@ -1,4 +1,4 @@
-package utils;
+package client;
 
 import org.junit.jupiter.api.*;
 import passoff.server.TestServerFacade;

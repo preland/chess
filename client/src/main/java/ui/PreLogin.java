@@ -3,7 +3,7 @@ package ui;
 import java.util.Objects;
 import java.util.Scanner;
 
-import utils.ServerFacade;
+import client.ServerFacade;
 
 public class PreLogin {
     ServerFacade server;

@@ -1,7 +1,11 @@
-package utils;
+package client;
 
 import com.google.gson.Gson;
 import model.GameData;
+import utils.CreateGameResult;
+import utils.ListGamesResult;
+import utils.LoginResult;
+import utils.ServiceException;
 
 import java.io.InputStream;
 import java.io.IOException;
