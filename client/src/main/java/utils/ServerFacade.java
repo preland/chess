@@ -2,19 +2,12 @@ package utils;
 
 import com.google.gson.Gson;
 import model.GameData;
-import service.ServiceException;
-import service.requestresult.CreateGameResult;
-import service.requestresult.ListGamesResult;
-import service.requestresult.LoginResult;
-import service.requestresult.LogoutResult;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
