@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class PostLogin {
     ServerFacade server;
+    String auth = "";
     public PostLogin(ServerFacade server) {
         this.server = new ServerFacade();
     }
@@ -14,7 +15,8 @@ public class PostLogin {
 
     }
 
-    public boolean run() {
+    public boolean run(String auth) {
+        this.auth = auth;
         boolean quit = false;
         boolean logout = false;
         Scanner scan = new Scanner(System.in);
@@ -57,9 +59,17 @@ public class PostLogin {
     }
 
     private void handleCreate(String[] input) {
+        if(input.length != 2) {
+            handleHelp();
+            return;
+        }
+        String name = input[1];
+        System.out.println(this.server.createGame(name, auth));
     }
 
     private boolean handleLogout() {
+
+        System.out.println(this.server.logout(auth));
         return true;
     }
 
@@ -69,6 +79,7 @@ public class PostLogin {
             return;
         }
         int id = Integer.parseInt(input[1]);
+        System.out.println(this.server.observe(id, auth));
     }
 
     private void handleJoin(String[] input) {
@@ -78,18 +89,13 @@ public class PostLogin {
         }
         int id = Integer.parseInt(input[1]);
         String teamColor = input[2];
-
+        System.out.println(this.server.joinGame(id, teamColor, auth));
     }
 
     private void handleList() {
+        System.out.println(this.server.listGames(auth));
     }
 
-    static void handleLogin(){
-        System.out.println("login text");
-    }
-    static void handleRegister(){
-        System.out.println("register text");
-    }
     static void handleHelp(){
         System.out.println("create <NAME> - create game");
         System.out.println("list - list games");

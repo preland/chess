@@ -38,11 +38,11 @@ public class ServerFacadeTests {
     @Test
     public void loginPositive() {
         serverFacade.register("test1", "test", "test");
-        Assertions.assertTrue(serverFacade.login("test1", "test"));
+        Assertions.assertNotEquals("", serverFacade.login("test1", "test"));
     }
     @Test
     public void loginNegative() {
         serverFacade.register("test2", "test", "test");
-        Assertions.assertFalse(serverFacade.login("test2", "fake"));
+        Assertions.assertEquals("", serverFacade.login("test2", "fake"));
     }
 }

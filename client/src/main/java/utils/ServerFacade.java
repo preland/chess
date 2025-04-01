@@ -2,6 +2,7 @@ package utils;
 
 import com.google.gson.Gson;
 import service.ServiceException;
+import service.requestresult.LoginResult;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -18,15 +19,20 @@ public class ServerFacade {
         this.url = "http://localhost:8080";
     }
 
-    public boolean login(String username, String password) {
+    public String login(String username, String password) {
 
         try {
             Map map = Map.of("username", username, "password", password);
             String body = new Gson().toJson(map);
-            request("POST", "/session", body);
-            return true;
+            String req = request("POST", "/session", body);
+            System.out.println("h");
+            System.out.println(req);
+            System.out.println("h");
+            String auth = new Gson().<LoginResult>fromJson(req, LoginResult.class).authToken();
+            System.out.println(auth);
+            return auth;
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            return false;
+            return "";
         }
     }
 
@@ -39,7 +45,7 @@ public class ServerFacade {
             request("POST", "/user", body);
             ret = "Successfully registered!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "Failed to register: " + e.toString(); //todo: remove debug info here
+            ret = "Failed to register! ";// + e.toString(); //todo: remove debug info here
             return ret;
         }
         return ret;
@@ -67,12 +73,42 @@ public class ServerFacade {
                 throw e;
             }
             try (InputStream tempBody = http.getInputStream()) {
-                InputStreamReader input = new InputStreamReader(tempBody);
-                 return input.toString();
+                 return new String (tempBody.readAllBytes());
             }
 
         } catch (URISyntaxException | IOException | ServiceException e) {
             throw e;
         }
+    }
+
+    public String createGame(String name, String auth) {
+        return "";
+    }
+
+    public String logout(String auth) {
+        return "";
+    }
+
+    public String observe(int id, String auth) {
+        return "";
+    }
+
+    public String joinGame(int id, String teamColor, String auth) {
+        String ret;
+
+        try {
+            Map map = Map.of("playerColor", teamColor, "gameID", id);
+            String body = new Gson().toJson(map);
+            request("PUT", "/game", body);
+            ret = "Successfully joined game!";
+        } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
+            ret = "Failed to join game: " + e.toString(); //todo: remove debug info here
+            return ret;
+        }
+        return ret;
+    }
+
+    public String listGames(String auth) {
+        return "";
     }
 }
