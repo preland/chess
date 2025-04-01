@@ -45,4 +45,28 @@ public class ServerFacadeTests {
         serverFacade.register("test2", "test", "test");
         Assertions.assertEquals("", serverFacade.login("test2", "fake"));
     }
+    @Test
+    public void createGamePositive() {
+
+    }
+    @Test
+    public void createGameNegative() {
+
+    }
+    @Test
+    public void logoutPositive() {
+
+    }
+    @Test
+    public void logoutNegative() {
+
+    }
+    @Test
+    public void joinGamePositive() {
+
+    }
+    @Test
+    public void joinGameNegative() {
+
+    }
 }

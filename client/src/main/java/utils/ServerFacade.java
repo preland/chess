@@ -1,9 +1,12 @@
 package utils;
 
 import com.google.gson.Gson;
+import model.GameData;
 import service.ServiceException;
 import service.requestresult.CreateGameResult;
+import service.requestresult.ListGamesResult;
 import service.requestresult.LoginResult;
+import service.requestresult.LogoutResult;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -12,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -102,7 +106,16 @@ public class ServerFacade {
     }
 
     public String logout(String auth) {
-        return "";
+        String ret;
+
+        try {
+            request("DELETE", "/session", null, auth);
+            ret = "Successfully logged out!";
+        } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
+            ret = "Failed to log out!";// + e.toString(); //todo: remove debug info here
+            return ret;
+        }
+        return ret;
     }
 
     /*public String observe(int id, String auth) {
@@ -118,13 +131,39 @@ public class ServerFacade {
             request("PUT", "/game", body, auth);
             ret = "Successfully joined game!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "Failed to join game: " + e.toString(); //todo: remove debug info here
+            ret = "Failed to join game!";
             return ret;
         }
         return ret;
     }
 
     public String listGames(String auth) {
-        return "";
+        String ret;
+        try {
+            String req = request("GET", "/game", null, auth);
+            List<GameData> games = new Gson().fromJson(req, ListGamesResult.class).games();
+            for(GameData game : games) {
+                if(game == null) {
+                    continue;
+                }
+                String white, black;
+                if(game.whiteUsername() == null) {
+                    white = "Open!";
+                } else {
+                    white = game.whiteUsername();
+                }
+                if(game.blackUsername() == null) {
+                    black = "Open!";
+                } else {
+                    black = game.blackUsername();
+                }
+                System.out.println("id: " + game.gameID() + ", name: " + game.gameName() + ", White: " + white + ", Black: " + black);
+            }
+            ret = "Successfully listed games!";
+        } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
+            ret = "Failed to list games!";
+            return ret;
+        }
+        return ret;
     }
 }
