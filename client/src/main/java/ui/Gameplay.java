@@ -19,30 +19,23 @@ public class Gameplay {
             System.out.print(">>> ");
             String[] input = scan.nextLine().split(" ");
             switch (input[0]) {
-                case "create":
-                    handleCreate(input);
+                case "redraw":
+                    handleRedraw(input);
                     break;
-                case "list":
-                    handleList();
+                case "make_move":
+                    handleMakeMove();
                     break;
-                case "join":
-                    handleJoin(input);
+                case "resign":
+                    handleResign();
                     break;
-                case "observe":
-                    handleObserve(input);
-                    break;
-                case "logout":
-                    if(handleLogout()) {
-                        logout = true;
-                    } else {
-                        System.out.println("Failed to logout!");
-                    }
+                case "moves":
+                    handleMoves(input);
                     break;
                 case "help":
                     handleHelp();
                     break;
-                case "quit":
-                    quit = true;
+                case "leave":
+                    leave = true;
                     //handleQuit();
                     break;
                 default:
@@ -52,12 +45,11 @@ public class Gameplay {
         }
     }
     static void handleHelp(){
-        System.out.println("create <NAME> - create game");
-        System.out.println("list - list games");
-        System.out.println("join <ID> [WHITE|BLACK]- join a game");
-        System.out.println("observe <ID> - view a game");
-        System.out.println("logout - logout of account");
-        System.out.println("quit - exits application");
+        System.out.println("redraw - redraw board");
+        System.out.println("make_move <start_col,start_row> <end_col,end_row> (promotion_piece) - make a move");
+        System.out.println("resign - resign from game");
+        System.out.println("moves <row,col> - show moves at position");
+        System.out.println("leave - leave game");
         System.out.println("help - show this info");
     }
     void print_board(String board) {
