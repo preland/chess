@@ -2,24 +2,20 @@ package ui;
 
 import client.ServerFacade;
 
-import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
-public class PostLogin {
+public class Gameplay {
     ServerFacade server;
     String auth = "";
-    Gameplay ui = new Gameplay();
-    public PostLogin() {
-    }
     public boolean run(ServerFacade server, String auth) {
         this.server = server;
         this.auth = auth;
-        boolean quit = false;
-        boolean logout = false;
+        boolean leave = false;
         Scanner scan = new Scanner(System.in);
-        while(!quit && !logout) {
+        while(!leave) {
             System.out.print(">>> ");
             String[] input = scan.nextLine().split(" ");
             switch (input[0]) {
@@ -54,38 +50,17 @@ public class PostLogin {
                     break;
             }
         }
-        return quit;
     }
-
-    private void handleCreate(String[] input) {
-        if(input.length != 2) {
-            handleHelp();
-            return;
-        }
-        String name = input[1];
-        String id = this.server.createGame(name, auth);
-        if(!Objects.equals(id, "")) {
-            System.out.println("Successfully created game with id: " + id + "!");
-        } else {
-            System.out.println("Failed to create game!");
-        }
+    static void handleHelp(){
+        System.out.println("create <NAME> - create game");
+        System.out.println("list - list games");
+        System.out.println("join <ID> [WHITE|BLACK]- join a game");
+        System.out.println("observe <ID> - view a game");
+        System.out.println("logout - logout of account");
+        System.out.println("quit - exits application");
+        System.out.println("help - show this info");
     }
-
-    private boolean handleLogout() {
-
-        System.out.println(this.server.logout(auth));
-        return true;
-    }
-
-    private void handleObserve(String[] input) {
-        if(input.length != 2) {
-            handleHelp();
-            return;
-        }
-        int id = Integer.parseInt(input[1]);
-        //System.out.println(this.server.observe(id, auth));
-        //for now just print out template
-        String initBoard = "RNBQKBNRPPPPPPPP................................pppppppprnbkqbnr";
+    void print_board(String board) {
         boolean isWhite = false;
         StringBuilder outBoard = new StringBuilder();
         for (int i = 0; i < 64;i++) {
@@ -96,7 +71,7 @@ public class PostLogin {
                 outBoard.append(SET_BG_COLOR_WHITE);
                 isWhite = true;
             }
-            switch(initBoard.charAt(i)) {
+            switch(board.charAt(i)) {
                 case 'R':
                     outBoard.append(SET_TEXT_COLOR_BLACK);
                     outBoard.append(BLACK_ROOK);
@@ -157,32 +132,5 @@ public class PostLogin {
             }
         }
         System.out.println(outBoard);
-    }
-
-    private void handleJoin(String[] input) {
-        if(input.length != 3) {
-            handleHelp();
-            return;
-        }
-        int id = Integer.parseInt(input[1]);
-        String teamColor = input[2];
-        System.out.println(this.server.joinGame(id, teamColor, auth));
-
-        //open websocket connection
-
-    }
-
-    private void handleList() {
-        System.out.println(this.server.listGames(auth));
-    }
-
-    static void handleHelp(){
-        System.out.println("create <NAME> - create game");
-        System.out.println("list - list games");
-        System.out.println("join <ID> [WHITE|BLACK]- join a game");
-        System.out.println("observe <ID> - view a game");
-        System.out.println("logout - logout of account");
-        System.out.println("quit - exits application");
-        System.out.println("help - show this info");
     }
 }
