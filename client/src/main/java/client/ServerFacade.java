@@ -1,5 +1,8 @@
 package client;
 
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 import utils.CreateGameResult;
@@ -184,12 +187,52 @@ public class ServerFacade {
         }
     }
     public void makeMove(String[] input, int id, String auth) {
+        ChessMove move;
+        switch(input[5]) {
+            case "ROOK":
+                move = new ChessMove(new ChessPosition(Integer.parseInt(input[1]),Integer.parseInt(input[2])), new ChessPosition(Integer.parseInt(input[3]), Integer.parseInt(input[4])), ChessPiece.PieceType.ROOK);
+                break;
+            case "KNIGHT":
+                move = new ChessMove(new ChessPosition(Integer.parseInt(input[1]),Integer.parseInt(input[2])), new ChessPosition(Integer.parseInt(input[3]), Integer.parseInt(input[4])), ChessPiece.PieceType.KNIGHT);
+                break;
+            case "BISHOP":
+                move = new ChessMove(new ChessPosition(Integer.parseInt(input[1]),Integer.parseInt(input[2])), new ChessPosition(Integer.parseInt(input[3]), Integer.parseInt(input[4])), ChessPiece.PieceType.BISHOP);
+                break;
+            case "QUEEN":
+                move = new ChessMove(new ChessPosition(Integer.parseInt(input[1]),Integer.parseInt(input[2])), new ChessPosition(Integer.parseInt(input[3]), Integer.parseInt(input[4])), ChessPiece.PieceType.QUEEN);
+                break;
+            default:
+                move = new ChessMove(new ChessPosition(Integer.parseInt(input[1]),Integer.parseInt(input[2])), new ChessPosition(Integer.parseInt(input[3]), Integer.parseInt(input[4])), null);
+                break;
+        }
         UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, auth, id);
+        cmd.setMove(move);
         String message = new Gson().toJson(cmd);
         try {
             connect.send(message);
         } catch (IOException e) {
             System.out.println("Failed to make move!");
+        }
+    }
+
+    public void resign(int id, String auth) {
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.RESIGN, auth, id);
+        String message = new Gson().toJson(cmd);
+        try {
+            connect.send(message);
+        } catch (IOException e) {
+            System.out.println("Failed to resign!");
+        }
+    }
+
+    public void observe(int id, String auth, String[] input) {
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, id);
+
+        String message = new Gson().toJson(cmd);
+        try {
+            connect.send(message);
+        } catch (IOException e) {
+            System.out.println("Failed to resign!");
         }
     }
 }
