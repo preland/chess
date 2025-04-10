@@ -27,11 +27,11 @@ public class ServerFacade {
             Map map = Map.of("username", username, "password", password);
             String body = new Gson().toJson(map);
             String req = request("POST", "/session", body, null);
-            System.out.println("h");
-            System.out.println(req);
-            System.out.println("h");
+            //System.out.println("h");
+            //System.out.println(req);
+            //System.out.println("h");
             String auth = new Gson().<LoginResult>fromJson(req, LoginResult.class).authToken();
-            System.out.println(auth);
+            //System.out.println(auth);
             return auth;
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
             return "";
@@ -55,7 +55,7 @@ public class ServerFacade {
     String request(String type, String path, String body, String auth) throws URISyntaxException, IOException {
         System.setProperty("javax.net.debug", "all");
         try {
-            System.out.println(body);
+            //System.out.println(body);
             HttpURLConnection http = (HttpURLConnection) new URI(url+path).toURL().openConnection();
             http.setRequestMethod(type);
             if(auth != null) {
@@ -119,7 +119,8 @@ public class ServerFacade {
         String ret;
 
         try {
-            Map map = Map.of("playerColor", teamColor, "gameID", id);
+            int realid = getID(id, auth);
+            Map map = Map.of("playerColor", teamColor, "gameID", realid);
             String body = new Gson().toJson(map);
             request("PUT", "/game", body, auth);
             ret = "Successfully joined game!";
@@ -129,13 +130,24 @@ public class ServerFacade {
         }
         return ret;
     }
-
+    public int getID(int id, String auth) throws URISyntaxException, IOException {
+        //yeah this is verrrry good
+        try {
+            String req = request("GET", "/game", null, auth);
+            List<GameData> games = new Gson().fromJson(req, ListGamesResult.class).games();
+            int realid = games.get(id - 1).gameID();
+            return realid;
+        } catch (URISyntaxException | IOException | IndexOutOfBoundsException e) {
+            throw e;
+        }
+    }
     public String listGames(String auth) {
         String ret;
         try {
             String req = request("GET", "/game", null, auth);
             List<GameData> games = new Gson().fromJson(req, ListGamesResult.class).games();
-            for(GameData game : games) {
+            for(int i = 0; i < games.size(); i++) {
+                GameData game = games.get(i);
                 if(game == null) {
                     continue;
                 }
@@ -150,7 +162,7 @@ public class ServerFacade {
                 } else {
                     black = game.blackUsername();
                 }
-                System.out.println("id: " + game.gameID() + ", name: " + game.gameName() + ", White: " + white + ", Black: " + black);
+                System.out.println("id: " + (i+1) + ", name: " + game.gameName() + ", White: " + white + ", Black: " + black);
             }
             ret = "Successfully listed games!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {

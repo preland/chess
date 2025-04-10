@@ -25,7 +25,7 @@ public class PreLogin {
                     auth = handleLogin(input);
                     break;
                 case "register":
-                    handleRegister(input);
+                    auth = handleRegister(input);
                     break;
                 case "help":
                     handleHelp();
@@ -61,16 +61,30 @@ public class PreLogin {
         //System.out.println("login text");
         return auth;
     }
-    void handleRegister(String[] input){
+    String handleRegister(String[] input){
+        String auth = "";
         if(input.length != 4) {
             handleHelp();
-            return;
+            return auth;
         }
 
         String username = input[1];
         String password = input[2];
         String email = input[3];
-        System.out.println(this.server.register(username, password, email));
+        if(Objects.equals(this.server.register(username, password, email), "Successfully registered!")){
+            System.out.println("Successfully registered!");
+            auth = this.server.login(username, password);
+            if(!Objects.equals(auth, "")) {
+                System.out.println("Successfully logged in!");
+                this.loggedIn = true;
+            } else {
+                System.out.println("Failed to login!");
+            }
+        }
+        else {
+            System.out.println("Failed to register!");
+        }
+        return auth;
         //System.out.println("register text");
     }
     void handleHelp(){

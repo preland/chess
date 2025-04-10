@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 import passoff.server.TestServerFacade;
 import server.Server;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 
 public class ServerFacadeTests {
 
@@ -102,5 +105,19 @@ public class ServerFacadeTests {
         String auth = serverFacade.login("test1", "test");
         serverFacade.createGame("name", auth);
         Assertions.assertEquals("Failed to list games!", serverFacade.listGames("fake"));
+    }
+    @Test
+    public void getIDPositive() throws URISyntaxException, IOException {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertEquals(1, serverFacade.getID(1, auth));
+    }
+    @Test
+    public void getIDNegative() throws URISyntaxException, IOException {
+        serverFacade.register("test1", "test", "test");
+        String auth = serverFacade.login("test1", "test");
+        serverFacade.createGame("name", auth);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> serverFacade.getID(2, auth));
     }
 }

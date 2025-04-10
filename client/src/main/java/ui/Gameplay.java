@@ -20,16 +20,16 @@ public class Gameplay {
             String[] input = scan.nextLine().split(" ");
             switch (input[0]) {
                 case "redraw":
-                    handleRedraw(input);
+                    //handleRedraw(input);
                     break;
                 case "make_move":
-                    handleMakeMove();
+                    //handleMakeMove();
                     break;
                 case "resign":
-                    handleResign();
+                    //handleResign();
                     break;
                 case "moves":
-                    handleMoves(input);
+                    //handleMoves(input);
                     break;
                 case "help":
                     handleHelp();
@@ -43,6 +43,7 @@ public class Gameplay {
                     break;
             }
         }
+        return true;
     }
     static void handleHelp(){
         System.out.println("redraw - redraw board");

@@ -2,6 +2,9 @@ package ui;
 
 import client.ServerFacade;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -78,17 +81,34 @@ public class PostLogin {
     }
 
     private void handleObserve(String[] input) {
-        if(input.length != 2) {
+        boolean secret = false;
+        if(input.length == 3) {
+            if (!Objects.equals(input[2], "secretUSEBLACK")) {
+                handleHelp();
+                return;
+            } else {
+                secret = true;
+            }
+        } else if(input.length != 2) {
             handleHelp();
             return;
         }
         int id = Integer.parseInt(input[1]);
+        try {
+            int realid = this.server.getID(id, auth);
+        } catch (URISyntaxException e) {
+            System.out.println("Failed to observe game!");
+        } catch (IOException e) {
+            System.out.println("Failed to observe game!");
+        }
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
-        String initBoard = "RNBQKBNRPPPPPPPP................................pppppppprnbkqbnr";
+        String initBoardWhite = "#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
+        String initBoardBlack = "#hgfedc0a#1rnbkqbnr12pppppppp23........34........45........56........67PPPPPPPP78RNBKQBNR8#hgfedc0a#";
+        String initBoard = secret ? initBoardBlack : initBoardWhite;
         boolean isWhite = false;
         StringBuilder outBoard = new StringBuilder();
-        for (int i = 0; i < 64;i++) {
+        for (int i = 0; i < 100;i++) {
             if(isWhite) {
                 outBoard.append(SET_BG_COLOR_DARK_GREEN);
                 isWhite = false;
@@ -97,6 +117,108 @@ public class PostLogin {
                 isWhite = true;
             }
             switch(initBoard.charAt(i)) {
+                case '#':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append("   ");
+                    break;
+                case 'a':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '0':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ "b" + " ");
+                    break;
+                case 'c':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case 'd':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case 'e':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case 'f':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case 'g':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case 'h':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '1':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '2':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '3':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '4':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '5':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '6':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '7':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
+                case '8':
+                    outBoard.append(RESET_BG_COLOR);
+                    outBoard.append(SET_BG_COLOR_DARK_GREY);
+                    outBoard.append(SET_TEXT_COLOR_WHITE);
+                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    break;
                 case 'R':
                     outBoard.append(SET_TEXT_COLOR_BLACK);
                     outBoard.append(BLACK_ROOK);
@@ -151,7 +273,7 @@ public class PostLogin {
             }
             outBoard.append(RESET_BG_COLOR);
             outBoard.append(RESET_TEXT_COLOR);
-            if(i%8==7) {
+            if(i%10==9) {
                 outBoard.append("\n");
                 isWhite = !isWhite;
             }
@@ -167,6 +289,13 @@ public class PostLogin {
         int id = Integer.parseInt(input[1]);
         String teamColor = input[2];
         System.out.println(this.server.joinGame(id, teamColor, auth));
+        if(Objects.equals(teamColor, "BLACK")) {
+            input[2] = "secretUSEBLACK";
+            handleObserve(input);
+        } else {
+            String[] newput = Arrays.copyOf(input, input.length-1);
+            handleObserve(newput);
+        }
 
         //open websocket connection
 
