@@ -7,6 +7,7 @@ import utils.ListGamesResult;
 import utils.LoginResult;
 import utils.ServiceException;
 
+import javax.websocket.DeploymentException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class ServerFacade {
     String url;
+    WebsocketManager connect;
     public ServerFacade(int port) {
         this.url = "http://localhost:" + port;
     }
@@ -170,5 +172,17 @@ public class ServerFacade {
             return ret;
         }
         return ret;
+    }
+
+    //websocket stuffs
+    public void connect() {
+        try {
+            this.connect = new WebsocketManager(url);
+        } catch (DeploymentException | URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void makeMove(String[] input, int id, String auth) {
+
     }
 }

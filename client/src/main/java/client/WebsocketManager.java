@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 
 public class WebsocketManager extends Endpoint {
     public Session session;
-    public WebsocketManager(String url) {
+    public WebsocketManager(String url) throws DeploymentException, URISyntaxException, IOException {
         try {
             URI uri = new URI("ws://" + url + "/connect");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -21,15 +21,17 @@ public class WebsocketManager extends Endpoint {
 
 
         } catch (URISyntaxException | DeploymentException | IOException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
 
     }
 
     private void handleMessage(String message) {
-
+        System.out.println("message");
     }
-
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
+    }
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
