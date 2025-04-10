@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
+import org.eclipse.jetty.websocket.api.Session;
 import service.ServiceException;
 import spark.*;
 

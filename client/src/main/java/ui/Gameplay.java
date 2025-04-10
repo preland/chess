@@ -60,7 +60,7 @@ public class Gameplay {
     }
 
     private void handleRedraw() {
-        print_board(board, color);
+        printBoard(board, color);
         //server.observe(id, auth, null);
     }
 
@@ -91,7 +91,7 @@ public class Gameplay {
         System.out.println("leave - leave game");
         System.out.println("help - show this info");
     }
-    void print_board(String unformBoardWhite, boolean black) {
+    static public void printBoard(String unformBoardWhite, boolean black) {
         //String initBoardWhite = "#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
         StringBuilder tmp = new StringBuilder();
         for (int i = 0; i < 8; i++) {

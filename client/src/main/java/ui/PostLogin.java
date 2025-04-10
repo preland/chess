@@ -101,12 +101,12 @@ public class PostLogin {
             System.out.println("Failed to observe game!");
             return;
         }
-
-        String board = server.observe(realid, auth, input);
+        server.connect();
+        server.observe(realid, auth, input);
 
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
-
+        //Gameplay.printBoard(board, secret);
         //System.out.println(outBoard);
     }
 

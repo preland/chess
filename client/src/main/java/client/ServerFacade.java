@@ -24,7 +24,7 @@ public class ServerFacade {
     String url;
     WebsocketManager connect;
     public ServerFacade(int port) {
-        this.url = "http://localhost:" + port;
+        this.url = "localhost:" + port;
     }
 
     public String login(String username, String password) {
@@ -62,7 +62,7 @@ public class ServerFacade {
         System.setProperty("javax.net.debug", "all");
         try {
             //System.out.println(body);
-            HttpURLConnection http = (HttpURLConnection) new URI(url+path).toURL().openConnection();
+            HttpURLConnection http = (HttpURLConnection) new URI("http://"+url+path).toURL().openConnection();
             http.setRequestMethod(type);
             if(auth != null) {
                 http.addRequestProperty("authorization", auth);
@@ -225,7 +225,7 @@ public class ServerFacade {
         }
     }
 
-    public String observe(int id, String auth, String[] input) {
+    public void observe(int id, String auth, String[] input) {
         UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, id);
 
         String message = new Gson().toJson(cmd);
