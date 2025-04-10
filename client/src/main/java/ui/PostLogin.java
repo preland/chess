@@ -102,12 +102,12 @@ public class PostLogin {
             return;
         }
 
-        server.observe(realid, auth, input);
+        String board = server.observe(realid, auth, input);
 
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
 
-        System.out.println(outBoard);
+        //System.out.println(outBoard);
     }
 
     private void handleJoin(String[] input) {

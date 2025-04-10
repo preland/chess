@@ -12,10 +12,12 @@ public class Gameplay {
     String auth = "";
     int id;
     String board;
-    public boolean run(ServerFacade server, String auth, int id) {
+    boolean color;
+    public boolean run(ServerFacade server, String auth, int id, boolean color) {
         this.server = server;
         this.auth = auth;
         this.id = id;
+        this.color = color;
         boolean leave = false;
         Scanner scan = new Scanner(System.in);
         while(!leave) {
@@ -58,7 +60,8 @@ public class Gameplay {
     }
 
     private void handleRedraw() {
-        server.observe(id, auth, null);
+        print_board(board, color);
+        //server.observe(id, auth, null);
     }
 
     private void handleMoves(String[] input) {
@@ -88,10 +91,22 @@ public class Gameplay {
         System.out.println("leave - leave game");
         System.out.println("help - show this info");
     }
-    void print_board(boolean black) {
-        String initBoardWhite = "#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
-        String initBoardBlack = new StringBuilder(initBoardWhite).reverse().toString();
-        String initBoard = black ? initBoardBlack : initBoardWhite;
+    void print_board(String unformBoardWhite, boolean black) {
+        //String initBoardWhite = "#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
+        StringBuilder tmp = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            tmp.append(String.valueOf(8 - i));
+            for (int j = 0; j < 8; j++) {
+                tmp.append(unformBoardWhite.charAt(j+(i*8)));
+            }
+            tmp.append(String.valueOf(8 - i));
+            if(i!=7) {
+                tmp.append(String.valueOf(7 - i));
+            }
+        }
+        String boardWhite = "#a0cdefgh#" + tmp + "#a0cdefgh#";
+        String boardBlack = new StringBuilder(boardWhite).reverse().toString();
+        String board = black ? boardBlack : boardWhite;
         boolean isWhite = false;
         StringBuilder outBoard = new StringBuilder();
         for (int i = 0; i < 100;i++) {
@@ -102,7 +117,7 @@ public class Gameplay {
                 outBoard.append(SET_BG_COLOR_WHITE);
                 isWhite = true;
             }
-            switch(initBoard.charAt(i)) {
+            switch(board.charAt(i)) {
                 case '#':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
@@ -113,7 +128,7 @@ public class Gameplay {
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '0':
                     outBoard.append(RESET_BG_COLOR);
@@ -125,85 +140,85 @@ public class Gameplay {
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'd':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'e':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'f':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'g':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'h':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '1':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '2':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '3':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '4':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '5':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '6':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '7':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case '8':
                     outBoard.append(RESET_BG_COLOR);
                     outBoard.append(SET_BG_COLOR_DARK_GREY);
                     outBoard.append(SET_TEXT_COLOR_WHITE);
-                    outBoard.append(" "+ initBoard.charAt(i) + " ");
+                    outBoard.append(" "+ board.charAt(i) + " ");
                     break;
                 case 'R':
                     outBoard.append(SET_TEXT_COLOR_BLACK);

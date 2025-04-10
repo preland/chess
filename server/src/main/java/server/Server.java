@@ -8,10 +8,14 @@ import dataaccess.DatabaseManager;
 import service.ServiceException;
 import spark.*;
 
+import java.util.HashMap;
+
 import static spark.Spark.before;
 import static spark.Spark.options;
 
 public class Server {
+
+    static HashMap<Session, Integer> userSessions = new HashMap();
 
     public int run(int desiredPort) {
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -19,6 +23,9 @@ public class Server {
         }
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/connect", WebsocketHandler.class);
+
         Spark.post("/user", (request, response) -> {
             try{
                 String body = UserHandler.registerHandler(request.body());

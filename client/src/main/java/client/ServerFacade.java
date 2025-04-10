@@ -225,7 +225,7 @@ public class ServerFacade {
         }
     }
 
-    public void observe(int id, String auth, String[] input) {
+    public String observe(int id, String auth, String[] input) {
         UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, id);
 
         String message = new Gson().toJson(cmd);
