@@ -1,0 +1,36 @@
+package client;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class WebsocketManager extends Endpoint {
+    public Session session;
+    public WebsocketManager(String url) {
+        try {
+            URI uri = new URI("ws://" + url + "/connect");
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            this.session = container.connectToServer(this, uri);
+
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                    handleMessage(message);
+                }
+            });
+
+
+        } catch (URISyntaxException | DeploymentException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private void handleMessage(String message) {
+
+    }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+}

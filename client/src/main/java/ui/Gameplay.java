@@ -10,9 +10,11 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 public class Gameplay {
     ServerFacade server;
     String auth = "";
-    public boolean run(ServerFacade server, String auth) {
+    int id;
+    public boolean run(ServerFacade server, String auth, int id) {
         this.server = server;
         this.auth = auth;
+        this.id = id;
         boolean leave = false;
         Scanner scan = new Scanner(System.in);
         while(!leave) {
@@ -20,16 +22,16 @@ public class Gameplay {
             String[] input = scan.nextLine().split(" ");
             switch (input[0]) {
                 case "redraw":
-                    //handleRedraw(input);
+                    handleRedraw();
                     break;
                 case "make_move":
-                    //handleMakeMove();
+                    handleMakeMove(input);
                     break;
                 case "resign":
-                    //handleResign();
+                    handleResign();
                     break;
                 case "moves":
-                    //handleMoves(input);
+                    handleMoves(input);
                     break;
                 case "help":
                     handleHelp();
@@ -45,11 +47,43 @@ public class Gameplay {
         }
         return true;
     }
+
+    private void handleMakeMove(String [] input) {
+        if(input.length != 5 | input.length != 6) {
+            handleHelp();
+            return;
+        }
+        server.makeMove(input, id, auth);
+    }
+
+    private void handleRedraw() {
+        server.observe(id, auth, null);
+    }
+
+    private void handleMoves(String[] input) {
+        if(input.length != 3) {
+            handleHelp();
+            return;
+        }
+        server.observe(id, auth, input);
+    }
+
+    private void handleResign() {
+        System.out.println("Are you sure?(y/N)");
+        Scanner scan = new Scanner(System.in);
+        String[] input = scan.nextLine().split(" ");
+        if(input[0].charAt(0) == 'y') {
+            server.resign(id, auth);
+        } else {
+            System.out.println("Cancelled");
+        }
+    }
+
     static void handleHelp(){
         System.out.println("redraw - redraw board");
-        System.out.println("make_move <start_col,start_row> <end_col,end_row> (promotion_piece) - make a move");
+        System.out.println("make_move <start_col> <start_row> <end_col> <end_row> (promotion_piece) - make a move");
         System.out.println("resign - resign from game");
-        System.out.println("moves <row,col> - show moves at position");
+        System.out.println("moves <row> <col> - show moves at position");
         System.out.println("leave - leave game");
         System.out.println("help - show this info");
     }
