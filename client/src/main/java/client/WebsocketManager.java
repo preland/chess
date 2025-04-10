@@ -29,7 +29,7 @@ public class WebsocketManager extends Endpoint {
     private void handleMessage(String message) {
         System.out.println("message");
     }
-    public void send(String msg) throws Exception {
+    public void send(String msg) throws IOException {
         this.session.getBasicRemote().sendText(msg);
     }
     @Override

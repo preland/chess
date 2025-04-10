@@ -6,6 +6,7 @@ import utils.CreateGameResult;
 import utils.ListGamesResult;
 import utils.LoginResult;
 import utils.ServiceException;
+import websocket.commands.UserGameCommand;
 
 import javax.websocket.DeploymentException;
 import java.io.InputStream;
@@ -183,6 +184,12 @@ public class ServerFacade {
         }
     }
     public void makeMove(String[] input, int id, String auth) {
-
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, auth, id);
+        String message = new Gson().toJson(cmd);
+        try {
+            connect.send(message);
+        } catch (IOException e) {
+            System.out.println("Failed to make move!");
+        }
     }
 }
