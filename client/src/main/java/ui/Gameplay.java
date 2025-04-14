@@ -92,7 +92,11 @@ public class Gameplay {
         System.out.println("help - show this info");
     }
     static public void printBoard(String unformBoardWhite, boolean black) {
-        //String initBoardWhite = "#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
+        if(unformBoardWhite == null) {
+            System.out.println("using placeholder, something is wrong!");
+            unformBoardWhite = "RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr";
+            //"#a0cdefgh#8RNBQKBNR87PPPPPPPP76........65........54........43........32pppppppp21rnbqkbnr1#a0cdefgh#";
+        }
         StringBuilder tmp = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             tmp.append(String.valueOf(8 - i));
@@ -100,9 +104,9 @@ public class Gameplay {
                 tmp.append(unformBoardWhite.charAt(j+(i*8)));
             }
             tmp.append(String.valueOf(8 - i));
-            if(i!=7) {
-                tmp.append(String.valueOf(7 - i));
-            }
+            //if(i!=7) {
+            //    tmp.append(String.valueOf(7 - i));
+            //}
         }
         String boardWhite = "#a0cdefgh#" + tmp + "#a0cdefgh#";
         String boardBlack = new StringBuilder(boardWhite).reverse().toString();
@@ -279,5 +283,6 @@ public class Gameplay {
                 isWhite = !isWhite;
             }
         }
+        System.out.print(outBoard);
     }
 }

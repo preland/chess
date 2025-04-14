@@ -103,7 +103,7 @@ public class PostLogin {
         }
         server.connect();
         server.observe(realid, auth, input);
-
+        ui.run(server, auth, id, secret); // player white == false
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
         //Gameplay.printBoard(board, secret);

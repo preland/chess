@@ -8,6 +8,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.Spark;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
+
+import java.io.IOException;
 
 @WebSocket
 public class WebsocketHandler {
@@ -28,10 +31,10 @@ public class WebsocketHandler {
     }
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
+        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
         switch(cmd.getCommandType()) {
             case CONNECT:
-
                 break;
             case LEAVE:
                 break;
@@ -42,6 +45,18 @@ public class WebsocketHandler {
             default:
                 break;
         }
+        try {
+            System.out.println(message);
+            sendMessage(session, message);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
+
+    private void sendMessage(Session session, String message) throws IOException {
+        System.out.println("sending msg: " + message);
+        session.getRemote().sendString(message);
+    }
+
 
 }

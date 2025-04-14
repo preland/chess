@@ -131,7 +131,7 @@ public class ServerFacade {
             request("PUT", "/game", body, auth);
             ret = "Successfully joined game!";
         } catch (URISyntaxException | IOException | ServiceException | NullPointerException e) {
-            ret = "Failed to join game!";
+            ret = "Failed to join game!" + e.getMessage();
             return ret;
         }
         return ret;

@@ -13,7 +13,13 @@ public class WebsocketManager extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, uri);
 
-            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> handleMessage(message));
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String message) {
+                handleMessage(message);
+            }
+
+        });
 
 
         } catch (URISyntaxException | DeploymentException | IOException e) {
@@ -23,7 +29,7 @@ public class WebsocketManager extends Endpoint {
     }
 
     private void handleMessage(String message) {
-        System.out.println("message");
+        System.out.println(message);
     }
     public void send(String msg) throws IOException {
         this.session.getBasicRemote().sendText(msg);
