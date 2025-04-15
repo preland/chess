@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
@@ -16,7 +17,7 @@ import static spark.Spark.options;
 
 public class Server {
 
-    static HashMap<Session, Integer> userSessions = new HashMap();
+    static HashMap<Session, Integer> sessions = new HashMap();
 
     public int run(int desiredPort) {
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -25,7 +26,7 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/connect", WebsocketHandler.class);
+        Spark.webSocket("/ws", WebsocketHandler.class);
 
         Spark.post("/user", (request, response) -> {
             try{

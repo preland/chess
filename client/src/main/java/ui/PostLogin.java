@@ -36,7 +36,7 @@ public class PostLogin {
                     handleJoin(input);
                     break;
                 case "observe":
-                    handleObserve(input);
+                    handleObserve(input, true);
                     break;
                 case "logout":
                     if(handleLogout()) {
@@ -80,7 +80,7 @@ public class PostLogin {
         return true;
     }
 
-    private void handleObserve(String[] input) {
+    private void handleObserve(String[] input, boolean isObserve) {
         boolean secret = false;
         if(input.length == 3) {
             if (!Objects.equals(input[2], "secretUSEBLACK")) {
@@ -102,7 +102,7 @@ public class PostLogin {
             return;
         }
         server.connect();
-        server.observe(realid, auth, input);
+        server.observe(realid, auth, input, isObserve);
         ui.run(server, auth, id, secret); // player white == false
         //System.out.println(this.server.observe(id, auth));
         //for now just print out template
@@ -120,10 +120,10 @@ public class PostLogin {
         System.out.println(this.server.joinGame(id, teamColor, auth));
         if(Objects.equals(teamColor, "BLACK")) {
             input[2] = "secretUSEBLACK";
-            handleObserve(input);
+            handleObserve(input, false);
         } else {
             String[] newput = Arrays.copyOf(input, input.length-1);
-            handleObserve(newput);
+            handleObserve(newput, false);
         }
 
         //open websocket connection

@@ -22,6 +22,7 @@ public class GameService {
             throw new ServiceException(e.code, e.body);
         }
     }
+
     public static JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
         //MemoryDAO memdb = MemoryDAO.getInstance();
         String authorization = request.authorization();
@@ -36,6 +37,7 @@ public class GameService {
             throw new ServiceException(e.code, e.body);
         }
     }
+
     public static ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
         //MemoryDAO memdb = MemoryDAO.getInstance();
         String authorization = request.authorization();
@@ -45,6 +47,16 @@ public class GameService {
             return new ListGamesResult(games);
         } catch (DataAccessException e) {
             throw new ServiceException(e.code, e.body);
+        }
+    }
+
+    public static GameData getGame(String auth, int id) {
+        try {
+            SQLDao sqldb = new SQLDao();
+            GameData game = sqldb.getGame(auth, id);
+            return game;
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 }

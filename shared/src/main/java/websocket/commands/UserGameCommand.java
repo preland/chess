@@ -20,6 +20,7 @@ public class UserGameCommand {
 
     String teamColor;
     ChessMove move;
+    boolean isObserve;
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
@@ -59,6 +60,14 @@ public class UserGameCommand {
 
     public void setMove(ChessMove move) {
         this.move = move;
+    }
+
+    public boolean isObserve() {
+        return isObserve;
+    }
+
+    public void setObserve(boolean observe) {
+        isObserve = observe;
     }
 
     @Override

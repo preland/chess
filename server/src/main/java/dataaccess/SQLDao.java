@@ -236,7 +236,7 @@ public class SQLDao {
         }
         return getAuth(authToken);
     }
-    public AuthData getAuth(String authToken) throws DataAccessException{
+    static public AuthData getAuth(String authToken) throws DataAccessException{
         System.out.println("n: " + authToken);
         try(var conn = DatabaseManager.getConnection()){
             var statement = conn.prepareStatement("SELECT username, authToken FROM auth WHERE authToken=?");
@@ -269,5 +269,26 @@ public class SQLDao {
     }
     static String generateToken() {
         return UUID.randomUUID().toString();
+    }
+
+    public GameData getGame(String auth, int id) throws DataAccessException {
+        AuthData verify = getAuth(auth);
+        try(var conn = DatabaseManager.getConnection()) {
+            var statement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game");
+            var result = statement.executeQuery();
+            GameData gameRet = null;
+            while(result.next()){
+                int gameID = result.getInt("gameID");
+                String whiteUsername = result.getString("whiteUsername");
+                String blackUsername = result.getString("blackUsername");
+                String gameName = result.getString("gameName");
+                ChessGame game = new Gson().fromJson(result.getString("game"), ChessGame.class);
+                gameRet = (new GameData(gameID, Objects.equals(whiteUsername, "null") ? null : whiteUsername,
+                        Objects.equals(blackUsername, "null") ? null : blackUsername, gameName, game));
+            }
+            return gameRet;
+        } catch (SQLException e) {
+            throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
+        }
     }
 }

@@ -69,7 +69,7 @@ public class Gameplay {
             handleHelp();
             return;
         }
-        server.observe(id, auth, input);
+        server.observe(id, auth, input, false);
     }
 
     private void handleResign() {

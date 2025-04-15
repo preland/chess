@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ServerFacade {
     String url;
@@ -225,9 +226,19 @@ public class ServerFacade {
         }
     }
 
-    public void observe(int id, String auth, String[] input) {
+    public void observe(int id, String auth, String[] input, boolean isObserve) {
         UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, id);
-
+        cmd.setObserve(isObserve);
+        boolean secret = false;
+        if(input.length == 3) {
+            if (Objects.equals(input[2], "secretUSEBLACK")) {
+                cmd.setTeamColor("BLACK");
+                secret = true;
+            }
+        }
+        if(!secret) {
+            cmd.setTeamColor("WHITE");
+        }
         String message = new Gson().toJson(cmd);
         try {
             connect.send(message);
