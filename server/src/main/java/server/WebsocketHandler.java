@@ -1,6 +1,7 @@
 package server;
 
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.SQLDao;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
+import service.ServiceException;
 import service.UserService;
 import spark.Spark;
 import websocket.commands.UserGameCommand;
@@ -64,10 +66,51 @@ public class WebsocketHandler {
 
     private void handleMove(Session session, String message) {
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
+        String printout = null;
+        try {
+            AuthData auth = SQLDao.getAuth(cmd.getAuthToken());
+            GameData game = GameService.getGame(auth.authToken(), cmd.getGameID());
+            if(cmd.getTeamColor() == null) {
+                throw new ServiceException("400", "you are observing!");
+            }
+            ChessGame.TeamColor tmp = (cmd.getTeamColor() == "WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            if(game.game().getTeamTurn() != tmp) {
+                throw new ServiceException("400", "it is not your turn!");
+            }
+            ChessGame.TeamColor opponent = (cmd.getTeamColor() == "BLACK") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            game.game().makeMove(cmd.getMove());
+            if(game.game().isInCheckmate(opponent)) {
+                printout = "Game over! " + cmd.getTeamColor() + "wins!";
+            }
+            else if(game.game().isInStalemate(opponent)) {
+                printout = "Game over! Stalemate!";
+            }
+            else if(game.game().isInCheck(opponent)) {
+                printout = opponent + "is in check!";
+            }
+            else {
+                printout = cmd.getTeamColor() + "has completed their move!";
+            }
+
+            ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            notification.setMessage(printout);
+            sendNotificationOthers(session, notification);
+
+
+        } catch (DataAccessException | IOException | ServiceException | InvalidMoveException e) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            msg.setErrorMessage("Error: " + e.getMessage());
+            try {
+                sendMessage(session, msg);
+            } catch (IOException ex) {
+                throw new RuntimeException("how? tbh if it fails here it deserves to crash the server smh");
+            }
+        }
     }
 
     private void handleLeave(Session session, String message) {
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
+
     }
 
     private void handleConnect(Session session, String message) {
@@ -76,7 +119,7 @@ public class WebsocketHandler {
         String printout;
         try {
             AuthData auth = SQLDao.getAuth(cmd.getAuthToken());
-            GameData game = GameService.getGame(auth.authToken(), 0);
+            GameData game = GameService.getGame(auth.authToken(), cmd.getGameID());
             if(cmd.isObserve()){
                 ChessGame.TeamColor color;
                 switch(cmd.getTeamColor()) {
@@ -100,8 +143,14 @@ public class WebsocketHandler {
             ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             msg.setGame(game.game());
             sendMessage(session, msg);
-        } catch (DataAccessException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (DataAccessException | IOException | ServiceException e) {
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            msg.setErrorMessage("Error: " + e.getMessage());
+            try {
+                sendMessage(session, msg);
+            } catch (IOException ex) {
+                throw new RuntimeException("how? tbh if it fails here it deserves to crash the server smh");
+            }
         }
     }
 
@@ -120,7 +169,7 @@ public class WebsocketHandler {
                 continue;
             }
             if(Server.sessions.get(s).equals(Server.sessions.get(session))) {
-                this.sendMessage(session, message);
+                this.sendMessage(s, message);
             }
         }
     }

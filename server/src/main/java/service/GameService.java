@@ -50,13 +50,21 @@ public class GameService {
         }
     }
 
-    public static GameData getGame(String auth, int id) {
+    public static GameData getGame(String auth, int id) throws ServiceException {
         try {
             SQLDao sqldb = new SQLDao();
             GameData game = sqldb.getGame(auth, id);
             return game;
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new ServiceException(e.code, e.body);
+        }
+    }
+    public static void setGame(String auth, String username, String teamColor, GameData game) throws ServiceException {
+        try {
+            SQLDao sqldb = new SQLDao();
+            sqldb.setGame(auth, username, teamColor);
+        } catch (DataAccessException e) {
+            throw new ServiceException(e.code, e.body);
         }
     }
 }

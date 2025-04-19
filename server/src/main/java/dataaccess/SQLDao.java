@@ -279,6 +279,9 @@ public class SQLDao {
             GameData gameRet = null;
             while(result.next()){
                 int gameID = result.getInt("gameID");
+                if(gameID != id) {
+                    continue;
+                }
                 String whiteUsername = result.getString("whiteUsername");
                 String blackUsername = result.getString("blackUsername");
                 String gameName = result.getString("gameName");
@@ -286,9 +289,16 @@ public class SQLDao {
                 gameRet = (new GameData(gameID, Objects.equals(whiteUsername, "null") ? null : whiteUsername,
                         Objects.equals(blackUsername, "null") ? null : blackUsername, gameName, game));
             }
+            if(gameRet == null) {
+                throw new SQLException("no game found");
+            }
             return gameRet;
         } catch (SQLException e) {
             throw new DataAccessException(String.valueOf(e.getErrorCode()), e.getMessage());
         }
+    }
+
+    public void setGame(String auth, String username, String teamColor, GameData game) {
+        updateGame(auth, username, teamColor, game);
     }
 }
